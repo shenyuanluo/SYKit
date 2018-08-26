@@ -13,12 +13,30 @@
 #define SYKIT_API
 
 
+/* 数据格式类型 */
+typedef enum __syPixFmtType {
+    SYPixFmt_unknow         = -1,   // 未知
+    SYPixFmt_i420           = 0,    // I420
+    SYPixFmt_nv12           = 1,    // NV12
+    SYPixFmt_nv21           = 2,    // NV21
+}SYPixFmtType;
+
+
 /* 错误码类型 */
 typedef enum __syErrType {
     SYErr_success           = 0,    // 成功
     SYErr_failure           = -1,   // 失败
     SYErr_paramError        = -2,   // 参数出错
 }SYErrType;
+
+
+/* 矩形区域结构体 */
+typedef struct __syRect {
+    unsigned int tlX;           // 左上角 X 坐标（Top-Left）
+    unsigned int tlY;           // 左上角 Y 坐标（Top-Left）
+    unsigned int brX;           // 右下角 X 坐标（Bottom-Right）
+    unsigned int brY;           // 右下角 Y 坐标（Bottom-Right）
+}SYRect;
 
 
 #pragma mark - SYConverter Start
