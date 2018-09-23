@@ -142,15 +142,6 @@ SYRect inline SYClipper::adaptRect(SYRect srcRect)
         dstRect.tlY = srcRect.brY;
         dstRect.brY = srcRect.tlY;
     }
-    // 像素点不能为奇数，否则会黑屏
-    if (0 != ((dstRect.brX - dstRect.tlX) & 1))
-    {
-        dstRect.brX--;
-    }
-    if (0 != ((dstRect.brY - dstRect.tlY) & 1))
-    {
-        dstRect.brY--;
-    }
     
     return dstRect;
 }

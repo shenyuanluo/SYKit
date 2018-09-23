@@ -41,19 +41,20 @@ SYKIT_API int SYRgbToBmp::SY_Rgb565ToBmp(unsigned char *inRgb, unsigned int widt
     unsigned char bfType[2] = {'B', 'M'};  // BMP 文件类型标志
     unsigned int typeLen    = sizeof(bfType);
     unsigned int headerSize = typeLen + m_bmpHeaderLen + m_bmpFileInfoLen; // 整个文件头部长度
-    unsigned int datalen    = width * height * 3;  // RGB24 数据长度
     
     SYBitMapHeader   m_BMPHeader   = {0};     // BMP 头结构
     SYBitMapFileInfo m_BMPFileInfo = {0};     // BMP 文件信息
     
-    m_BMPHeader.bfSize        = datalen + headerSize;
-    m_BMPHeader.bfbfOffBits   = headerSize;
+    m_BMPHeader.bfOffBits     = headerSize;
     m_BMPFileInfo.biSize      = m_bmpFileInfoLen;
     m_BMPFileInfo.biWidth     = width;
-    m_BMPFileInfo.biHeight    = -height; // BMP 存储像素数据与y轴方向相反（即，位图是底朝上的）。
+    m_BMPFileInfo.biHeight    = height;
     m_BMPFileInfo.biPlanes    = 1;
-    m_BMPFileInfo.biBitcount  = 24;
-    m_BMPFileInfo.biSizeImage = datalen;
+    m_BMPFileInfo.biBitCount  = 24;
+    int rawBytePerRow         = (width * m_BMPFileInfo.biBitCount + 7)>>3; // 每行字节数（裸数据）
+    int padBytePerRow         = (4 - rawBytePerRow) & 3;   // 每行需填充的字节数（确保每行字节数为 4 的倍数）
+    m_BMPFileInfo.biSizeImage = height * (rawBytePerRow + padBytePerRow);
+    m_BMPHeader.bfSize        = m_BMPFileInfo.biSizeImage + m_BMPHeader.bfOffBits;
     
     fwrite(bfType, 1, typeLen, fp_bmp); // 先写入 BMP 文件类型标志：'BM'
     fwrite(&m_BMPHeader, 1, m_bmpHeaderLen, fp_bmp);  // 写入 BMP 头
@@ -64,7 +65,12 @@ SYKIT_API int SYRgbToBmp::SY_Rgb565ToBmp(unsigned char *inRgb, unsigned int widt
     
     unsigned char r, g, b;      // 当前像素点 R、G、B 值
     unsigned int curPos = 0;    // 当前像素点 RGB 内存位置
-    for (int row = 0; row < height; row++)  // 遍历所有行
+    
+    unsigned char *paddingData = (unsigned char*)malloc(padBytePerRow);
+    memset(paddingData, 0, padBytePerRow);
+    
+    // BMP 存储像素数据与y轴方向相反（即，位图是底朝上的）
+    for (int row = height - 1; row >= 0; row--)  // 遍历所有行
     {
         for (int col = 0; col < width; col++)   // 遍历所有列
         {
@@ -97,6 +103,12 @@ SYKIT_API int SYRgbToBmp::SY_Rgb565ToBmp(unsigned char *inRgb, unsigned int widt
             g |= (colorLow & 0xE0)>>3;  // 获取低字节高 3 个bit，作为 G 的中 3 位
             b = (colorLow & 0x1F)<<3;   // 获取低字节高 5 个bit，作为 B 的高 5 位
             
+            // 在每行开头（或最后）填充空白数据
+            if (0 == col && 0 < padBytePerRow)
+            {
+                // 填充数据
+                fwrite(paddingData, 1, padBytePerRow, fp_bmp);
+            }
             // BMP 数据存储形式： B1|G1|R1,B2|G2|R2
             fwrite(&b, 1, 1, fp_bmp);   // 写入 B 数据
             fwrite(&g, 1, 1, fp_bmp);   // 写入 G 数据
@@ -127,19 +139,20 @@ SYKIT_API int SYRgbToBmp::SY_Rgb24ToBmp(unsigned char *inRgb, unsigned int width
     unsigned char bfType[2] = {'B', 'M'};  // BMP 文件类型标志
     unsigned int typeLen    = sizeof(bfType);
     unsigned int headerSize = typeLen + m_bmpHeaderLen + m_bmpFileInfoLen; // 整个文件头部长度
-    unsigned int datalen    = width * height * 3;  // RGB24 数据长度
     
     SYBitMapHeader   m_BMPHeader   = {0};     // BMP 头结构
     SYBitMapFileInfo m_BMPFileInfo = {0};     // BMP 文件信息
     
-    m_BMPHeader.bfSize        = datalen + headerSize;
-    m_BMPHeader.bfbfOffBits   = headerSize;
+    m_BMPHeader.bfOffBits     = headerSize;
     m_BMPFileInfo.biSize      = m_bmpFileInfoLen;
     m_BMPFileInfo.biWidth     = width;
-    m_BMPFileInfo.biHeight    = -height; // BMP 存储像素数据与y轴方向相反（即，位图是底朝上的）。
+    m_BMPFileInfo.biHeight    = height;
     m_BMPFileInfo.biPlanes    = 1;
-    m_BMPFileInfo.biBitcount  = 24;
-    m_BMPFileInfo.biSizeImage = datalen;
+    m_BMPFileInfo.biBitCount  = 24;
+    int rawBytePerRow         = (width * m_BMPFileInfo.biBitCount + 7)>>3; // 每行字节数（裸数据）
+    int padBytePerRow         = (4 - rawBytePerRow) & 3;   // 每行需填充的字节数（确保每行字节数为 4 的倍数）
+    m_BMPFileInfo.biSizeImage = height * (rawBytePerRow + padBytePerRow);
+    m_BMPHeader.bfSize        = m_BMPFileInfo.biSizeImage + m_BMPHeader.bfOffBits;
     
     fwrite(bfType, 1, typeLen, fp_bmp); // 先写入 BMP 文件类型标志：'BM'
     fwrite(&m_BMPHeader, 1, m_bmpHeaderLen, fp_bmp);  // 写入 BMP 头
@@ -147,7 +160,12 @@ SYKIT_API int SYRgbToBmp::SY_Rgb24ToBmp(unsigned char *inRgb, unsigned int width
     
     unsigned char r, g, b;      // 当前像素点 R、G、B 值
     unsigned int curPos = 0;    // 当前像素点 RGB 内存位置
-    for(int row = 0; row < height; row++)   // 遍历所有行
+    
+    unsigned char *paddingData = (unsigned char*)malloc(padBytePerRow);
+    memset(paddingData, 0, padBytePerRow);
+    
+    // BMP 存储像素数据与y轴方向相反（即，位图是底朝上的）
+    for(int row = height - 1; row >= 0; row--)   // 遍历所有行
     {
         for(int col = 0; col < width; col++)    // 遍历所有列
         {
@@ -175,12 +193,20 @@ SYKIT_API int SYRgbToBmp::SY_Rgb24ToBmp(unsigned char *inRgb, unsigned int width
                 default:
                     break;
             }
+            // 在每行开头（或最后）填充空白数据
+            if (0 == col && 0 < padBytePerRow)
+            {
+                // 填充数据
+                fwrite(paddingData, 1, padBytePerRow, fp_bmp);
+            }
             // BMP 数据存储形式： B1|G1|R1,B2|G2|R2
             fwrite(&b, 1, 1, fp_bmp);   // 写入 B 数据
             fwrite(&g, 1, 1, fp_bmp);   // 写入 G 数据
             fwrite(&r, 1, 1, fp_bmp);   // 写入 R 数据
         }
     }
+    free(paddingData);
+    paddingData = NULL;
     fclose(fp_bmp);
     fp_bmp = NULL;
     fflush(stdout);
