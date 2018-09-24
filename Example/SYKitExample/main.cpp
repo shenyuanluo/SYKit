@@ -903,7 +903,7 @@ void testRgb24ToNv21()
 
 #pragma mark - Test convert to bmp
 #pragma mark -- 测试 I420 转 BMP
-void testI420ToBmp()
+void testYuvToBmp()
 {
     SYYuvToBmp converter;
     converter.SY_SetMatrixType(SYMatrix_normal);
@@ -915,7 +915,17 @@ void testI420ToBmp()
         printf("Malloc data buffer failure!\n");
         return;
     }
+    // I420
+    converter.SY_SetYuvType(SYYuv_i420);
     FILE *fyuv   = fopen("XinWenLianBo_480x360_I420.yuv", "rb+");   // 打开 YUV 文件
+    
+    // Nv12
+//    converter.SY_SetYuvType(SYYuv_nv12);
+//    FILE *fyuv   = fopen("XinWenLianBo_480x360_NV12.yuv", "rb+");   // 打开 YUV 文件
+    
+    // NV21
+//    converter.SY_SetYuvType(SYYuv_nv21);
+//    FILE *fyuv   = fopen("XinWenLianBo_480x360_NV21.yuv", "rb+");   // 打开 YUV 文件
     
     if (NULL == fyuv)
     {
@@ -933,92 +943,14 @@ void testI420ToBmp()
         memset(yuv, 0, I420_BUFF_SIZE);
         fread(yuv, 1, I420_BUFF_SIZE, fyuv);  // 每次读取一帧 YUV 数据
         count++;
-        sprintf(fileName, "./BMP/XinWenLianBo_480x360_I420_Frame_%d.bmp", count);
-        converter.SY_I420ToBmp(yuv, YUV_WIDTH, YUV_HEIGHT, fileName);    // 转换成 BMP
+        sprintf(fileName, "./BMP/XinWenLianBo_480x360_Frame_%d.bmp", count);
+        converter.SY_YuvToBmp(yuv, YUV_WIDTH, YUV_HEIGHT, fileName);    // 转换成 BMP
     }
     fclose(fyuv);
     free(yuv);
     yuv   = NULL;
 }
 
-
-#pragma mark -- 测试 NV12 转 BMP
-void testNV12ToBmp()
-{
-    SYYuvToBmp converter;
-    converter.SY_SetMatrixType(SYMatrix_normal);
-    converter.SY_SetConvertType(SYConvert_normal);
-    
-    unsigned char *yuv   = (unsigned char *)malloc(NV12_BUFF_SIZE);
-    if (NULL == yuv)
-    {
-        printf("Malloc data buffer failure!\n");
-        return;
-    }
-    FILE *fyuv   = fopen("XinWenLianBo_480x360_NV12.yuv", "rb+");   // 打开 YUV 文件
-    
-    if (NULL == fyuv)
-    {
-        printf("Open file failure!\n");
-        free(yuv);
-        yuv   = NULL;
-        
-        return;
-    }
-    static int count = 0;
-    char fileName[64];
-    while (!feof(fyuv))
-    {
-        // 清空内存
-        memset(yuv, 0, NV12_BUFF_SIZE);
-        fread(yuv, 1, NV12_BUFF_SIZE, fyuv);  // 每次读取一帧 YUV 数据
-        count++;
-        sprintf(fileName, "./BMP/XinWenLianBo_480x360_NV12_Frame_%d.bmp", count);
-        converter.SY_Nv12ToBmp(yuv, YUV_WIDTH, YUV_HEIGHT, fileName);    // 转换成 BMP
-    }
-    fclose(fyuv);
-    free(yuv);
-    yuv   = NULL;
-}
-
-#pragma mark -- 测试 NV21 转 BMP
-void testNV21ToBmp()
-{
-    SYYuvToBmp converter;
-    converter.SY_SetMatrixType(SYMatrix_normal);
-    converter.SY_SetConvertType(SYConvert_normal);
-    
-    unsigned char *yuv   = (unsigned char *)malloc(NV21_BUFF_SIZE);
-    if (NULL == yuv)
-    {
-        printf("Malloc data buffer failure!\n");
-        return;
-    }
-    FILE *fyuv   = fopen("XinWenLianBo_480x360_NV21.yuv", "rb+");   // 打开 YUV 文件
-    
-    if (NULL == fyuv)
-    {
-        printf("Open file failure!\n");
-        free(yuv);
-        yuv   = NULL;
-        
-        return;
-    }
-    static int count = 0;
-    char fileName[64];
-    while (!feof(fyuv))
-    {
-        // 清空内存
-        memset(yuv, 0, NV21_BUFF_SIZE);
-        fread(yuv, 1, NV21_BUFF_SIZE, fyuv);  // 每次读取一帧 YUV 数据
-        count++;
-        sprintf(fileName, "./BMP/XinWenLianBo_480x360_NV21_Frame_%d.bmp", count);
-        converter.SY_Nv21ToBmp(yuv, YUV_WIDTH, YUV_HEIGHT, fileName);    // 转换成 BMP
-    }
-    fclose(fyuv);
-    free(yuv);
-    yuv = NULL;
-}
 
 #pragma mark -- RGB565 转 BMP
 void testRgb565ToBmp()
@@ -1158,7 +1090,7 @@ void testClipYuv()
             
             fwrite(srcYuv, 1, I420_BUFF_SIZE, supYuv);
             sprintf(fileName, "./BMP/Frame_%d.bmp", frameNo);
-            converter.SY_I420ToBmp(srcYuv, YUV_WIDTH, YUV_HEIGHT, fileName);
+            converter.SY_YuvToBmp(srcYuv, YUV_WIDTH, YUV_HEIGHT, fileName);
             
             for (int j = 0; j < CLIP_COUNT; j++)
             {
@@ -1167,7 +1099,7 @@ void testClipYuv()
                     fwrite(dstYuv[j], 1, (clipRect[j].brX - clipRect[j].tlX) * (clipRect[j].brY - clipRect[j].tlY) * 1.5, subYuv);
                 }
                 sprintf(fileName, "./BMP/Frame_%d_Clip_%d.bmp", frameNo, j);
-                converter.SY_I420ToBmp(dstYuv[j], clipRect[j].brX - clipRect[j].tlX, clipRect[j].brY - clipRect[j].tlY, fileName);    // 转换成 BMP
+                converter.SY_YuvToBmp(dstYuv[j], clipRect[j].brX - clipRect[j].tlX, clipRect[j].brY - clipRect[j].tlY, fileName);    // 转换成 BMP
             }
             printf("裁剪完成：width-%d, height-%d\n", clipRect[0].brX - clipRect[0].tlX, clipRect[0].brY - clipRect[0].tlY);
             break;
@@ -1208,17 +1140,13 @@ int main(int argc, const char * argv[])
     
 //    testRgb24ToNv21();
     
-//    testI420ToBmp();
-    
-//    testNV12ToBmp();
-    
-//    testNV21ToBmp();
+    testYuvToBmp();
     
 //    testRgb565ToBmp();
     
 //    testRgb24ToBmp();
     
-    testClipYuv();
+//    testClipYuv();
     
     return 0;
 }

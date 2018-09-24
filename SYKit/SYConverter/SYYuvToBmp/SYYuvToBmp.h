@@ -16,9 +16,10 @@
 class SYYuvToBmp
 {
 private:
-    SYMatrixType  m_mType;    // 转换矩阵类型
-    SYConvertType m_cType;    // 转换方法类型
-    SYEndianType  m_eType;    // 大小端类型
+    SYMatrixType  m_mType;      // 转换矩阵类型
+    SYConvertType m_cType;      // 转换方法类型
+    SYEndianType  m_eType;      // 大小端类型
+    SYYuvType     m_yuvType;    // YUV 数据格式类型
     
     int m_rv[256];  // 计算 R 值使用的 V 表
     int m_gu[256];  // 计算 G 值使用的 U 表
@@ -73,37 +74,22 @@ public:
     SYKIT_API void SY_SetMatrixType(SYMatrixType mType);
     
     /**
-     I420 转 BMP
-     
-     @param inYuv I420数据（输入）
-     @param width 帧-宽度
-     @param height 帧-高度
-     @param outBmpPath BMP 文件路径（输出）
-     @return 转换是否成功，参见‘SYErrType’
+     设置 YUV 数据格式类型（默认：I420）
+
+     @param yuvType yuv 数据类型
      */
-    SYKIT_API int SY_I420ToBmp(unsigned char* inYuv, unsigned int width, unsigned int height, const char* outBmpPath) const;
+    SYKIT_API void SY_SetYuvType(SYYuvType yuvType);
     
     /**
-     NV12 转 BMP
+     YUV 转 BMP
      
-     @param inYuv NV12数据（输入）
+     @param inYuv YUV 数据（输入）
      @param width 帧-宽度
      @param height 帧-高度
      @param outBmpPath BMP 文件路径（输出）
      @return 转换是否成功，参见‘SYErrType’
      */
-    SYKIT_API int SY_Nv12ToBmp(unsigned char* inYuv, unsigned int width, unsigned int height, const char* outBmpPath) const;
-    
-    /**
-     NV21 转 BMP
-     
-     @param inYuv NV21数据（输入）
-     @param width 帧-宽度
-     @param height 帧-高度
-     @param outBmpPath BMP 文件路径（输出）
-     @return 转换是否成功，参见‘SYErrType’
-     */
-    SYKIT_API int SY_Nv21ToBmp(unsigned char* inYuv, unsigned int width, unsigned int height, const char* outBmpPath) const;
+    SYKIT_API int SY_YuvToBmp(unsigned char* inYuv, unsigned int width, unsigned int height, const char* outBmpPath) const;
 };
 
 #endif /* SYYuvToBmp_h */

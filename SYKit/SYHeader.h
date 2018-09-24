@@ -25,6 +25,31 @@ typedef enum __syPixFmtType {
     SYPiXFmt_rgb32          = 6,    // RGB 32
 }SYPixFmtType;
 
+/* YUV 数据格式类型 */
+typedef enum __syYuvType {
+    SYYuv_unknow            = SYPixFmt_unknow,
+    SYYuv_i420              = SYPixFmt_i420,
+    SYYuv_nv12              = SYPixFmt_nv12,
+    SYYuv_nv21              = SYPixFmt_nv21,
+}SYYuvType;
+
+/* RGB 数据格式类型 */
+typedef enum __syRgbType {
+    SYRgb_unknow            = SYPixFmt_unknow,
+    SYRgb_rgb555            = SYPiXFmt_rgb555,
+    SYRgb_rgb565            = SYPiXFmt_rgb565,
+    SYRgb_rgb24             = SYPiXFmt_rgb24,
+    SYRgb_rgb32             = SYPiXFmt_rgb32,   
+}SYRgbType;
+
+/* BMP 颜色深度（每个象素所需要的位数）类型 */
+typedef enum __syBmpBitCount {
+    SYBmpBitCount_15        = 0,    // RGB555
+    SYBmpBitCount_16        = 1,    // RGB565
+    SYBmpBitCount_24        = 2,    // RGB24
+    SYBmpBitCount_32        = 3,    // RGB32
+}SYBmpBitCount;
+
 
 /* 错误码类型 */
 typedef enum __syErrType {
