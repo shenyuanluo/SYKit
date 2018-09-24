@@ -902,7 +902,7 @@ void testRgb24ToNv21()
 
 
 #pragma mark - Test convert to bmp
-#pragma mark -- 测试 I420 转 BMP
+#pragma mark -- 测试 YUV 转 BMP
 void testYuvToBmp()
 {
     SYYuvToBmp converter;
@@ -952,78 +952,49 @@ void testYuvToBmp()
 }
 
 
-#pragma mark -- RGB565 转 BMP
-void testRgb565ToBmp()
+#pragma mark -- RGB 转 BMP
+void testRgbToBmp()
 {
     SYRgbToBmp converter;
     
-    unsigned char *rgb565 = (unsigned char *)malloc(RGB_565_BUFF_SIZE);
-    if (NULL == rgb565)
-    {
-        printf("Malloc data buffer failure!\n");
-        return;
-    }
-    FILE *frgb565 = fopen("XinWenLianBo_480x360_RGB565.rgb", "rb+");  // 打开 RGB565 文件
+    // RGB565
+//    converter.SY_SetRgbType(SYRgb_rgb565);
+//    size_t bufLen = RGB_565_BUFF_SIZE;
+//    FILE *frgb = fopen("XinWenLianBo_480x360_RGB565.rgb", "rb+");  // 打开 RGB565 文件
     
-    if (NULL == frgb565)
+    // RGB24
+    converter.SY_SetRgbType(SYRgb_rgb24);
+    size_t bufLen = RGB_24_BUFF_SIZE;
+    FILE *frgb = fopen("XinWenLianBo_480x360_RGB24.rgb", "rb+");  // 打开 RGB24 文件
+    
+    if (NULL == frgb)
     {
         printf("Open file failure!\n");
-        free(rgb565);
-        rgb565 = NULL;
-        
         return;
     }
-    static int count = 0;
-    char fileName[64];
-    while (!feof(frgb565))
-    {
-        // 清空内存
-        memset(rgb565, 0, RGB_565_BUFF_SIZE);
-        fread(rgb565, 1, RGB_565_BUFF_SIZE, frgb565);  // 每次读取一帧 RGB565 数据
-        count++;
-        sprintf(fileName, "./BMP/XinWenLianBo_480x360_RGB565_Frame_%d.bmp", count);
-        converter.SY_Rgb565ToBmp(rgb565, YUV_WIDTH, YUV_HEIGHT, fileName);
-    }
-    fclose(frgb565);
-    free(rgb565);
-    rgb565 = NULL;
-}
-
-#pragma mark -- RGB24 转 BMP
-void testRgb24ToBmp()
-{
-    SYRgbToBmp converter;
     
-    unsigned char *rgb24 = (unsigned char *)malloc(RGB_24_BUFF_SIZE);
-    if (NULL == rgb24)
+    unsigned char *rgb = (unsigned char *)malloc(bufLen);
+    if (NULL == rgb)
     {
         printf("Malloc data buffer failure!\n");
+        fclose(frgb);
         return;
     }
-    FILE *frgb24 = fopen("XinWenLianBo_480x360_RGB24.rgb", "rb+");  // 打开 RGB24 文件
     
-    if (NULL == frgb24)
-    {
-        printf("Open file failure!\n");
-        free(rgb24);
-        rgb24 = NULL;
-        
-        return;
-    }
     static int count = 0;
     char fileName[64];
-    while (!feof(frgb24))
+    while (!feof(frgb))
     {
         // 清空内存
-        memset(rgb24, 0, RGB_24_BUFF_SIZE);
-        fread(rgb24, 1, RGB_24_BUFF_SIZE, frgb24);  // 每次读取一帧 RGB24 数据
+        memset(rgb, 0, bufLen);
+        fread(rgb, 1, bufLen, frgb);  // 每次读取一帧 RGB565 数据
         count++;
-        sprintf(fileName, "./BMP/XinWenLianBo_480x360_RGB24_Frame_%d.bmp", count);
-        converter.SY_Rgb24ToBmp(rgb24, YUV_WIDTH, YUV_HEIGHT, fileName);
+        sprintf(fileName, "./BMP/XinWenLianBo_480x360_Frame_%d.bmp", count);
+        converter.SY_RgbToBmp(rgb, YUV_WIDTH, YUV_HEIGHT, fileName);
     }
-    fclose(frgb24);
-    free(rgb24);
-    rgb24 = NULL;
+    fclose(frgb);
+    free(rgb);
+    rgb = NULL;
 }
 
 #pragma mark - Test clipper
@@ -1140,11 +1111,9 @@ int main(int argc, const char * argv[])
     
 //    testRgb24ToNv21();
     
-    testYuvToBmp();
+//    testYuvToBmp();
     
-//    testRgb565ToBmp();
-    
-//    testRgb24ToBmp();
+    testRgbToBmp();
     
 //    testClipYuv();
     
