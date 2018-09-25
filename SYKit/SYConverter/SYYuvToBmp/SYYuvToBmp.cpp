@@ -190,8 +190,8 @@ SYKIT_API int SYYuvToBmp::SY_YuvToBmp(unsigned char* inYuv, unsigned int width, 
             
             yuv2rgb(y, u, v, &r, &g, &b);   // 转换成 RGB 值
             
-            // 在每行开头（或最后）填充空白数据
-            if (0 == col && 0 < padBytePerRow)
+            // 在每行最后（在开头填充，有时会出现 BMP 像素错乱现象，原因未知）填充空白数据
+            if (width - 1 == col && 0 < padBytePerRow)
             {
                 fwrite(paddingData, 1, padBytePerRow, fp_bmp);
             }
