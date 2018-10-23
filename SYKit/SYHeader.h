@@ -50,6 +50,34 @@ typedef enum __syBmpBitCount {
     SYBmpBitCount_32        = 3,    // RGB32
 }SYBmpBitCount;
 
+/* (帧画面）旋转度数 */
+typedef enum __syRotateDegree {
+    SYRotate_90             = 0,    // 旋转 90°
+    SYRotate_180            = 1,    // 旋转 180°
+    SYRotate_270            = 2,    // 旋转 270°
+    SYRotate_360            = 3,    // 旋转 360°
+}SYRotateDegree;
+
+/*
+ （帧画面）旋转方向类型
+ SYRotate_clockwise：顺时针旋转画面
+                                                11  6   1
+        1   2   3   4    5                      12  7   2
+        6   7   8   9   10      -------->       13  8   3
+        11  12  13  14  15                      14  9   4
+                                                15 10   5
+ 
+ SYRotate_antiClockwise：逆时针旋转画面
+                                                5   10  15
+        1   2   3   4    5                      4   9   14
+        6   7   8   9   10      -------->       3   8   13
+        11  12  13  14  15                      2   7   12
+                                                1   6   11
+ */
+typedef enum __syRotateDirection {
+    SYRotate_clockwise      = 0,    // 顺时针
+    SYRotate_antiClockwise  = 1,    // 逆时针
+}SYRotateDirection;
 
 /* 错误码类型 */
 typedef enum __syErrType {

@@ -15,6 +15,7 @@
 #include "SYRgbToBmp.h"
 #include "SYClipper.h"
 
+#include "SYRotate.h"
 
 
 #define YUV_WIDTH  480              // 视频帧宽
@@ -1176,6 +1177,103 @@ void testClipRgb()
 }
 
 
+#pragma mark - 旋转
+#pragma mark -- Yuv 旋转
+void testYuvRotate()
+{
+    SYRotate rotate;
+    SYYuvToBmp converter;
+    
+    unsigned char *yuv     = (unsigned char *)malloc(I420_BUFF_SIZE);
+    unsigned char *rotateYuv = (unsigned char *)malloc(I420_BUFF_SIZE);
+    if (NULL == yuv || NULL == rotateYuv)
+    {
+        printf("Malloc data buffer failure!\n");
+        return;
+    }
+//    // I420
+//    FILE *fyuv = fopen("XinWenLianBo_480x360_I420.yuv", "rb+");  // 打开 YUv 文件
+//    FILE *frotateYuv = fopen("XinWenLianBo_480x360_I420_rotate.yuv", "wb+");  // 打开 Yuv 文件
+//    rotate.SY_SetYuvType(SYYuv_i420);
+//    converter.SY_SetYuvType(SYYuv_i420);
+    
+//    // NV12
+//    FILE *fyuv = fopen("XinWenLianBo_480x360_NV12.yuv", "rb+");  // 打开 YUv 文件
+//    FILE *frotateYuv = fopen("XinWenLianBo_480x360_NV12_rotate.yuv", "wb+");  // 打开 Yuv 文件
+//    rotate.SY_SetYuvType(SYYuv_nv12);
+//    converter.SY_SetYuvType(SYYuv_nv12);
+    
+    // NV21
+    FILE *fyuv = fopen("XinWenLianBo_480x360_NV21.yuv", "rb+");  // 打开 YUv 文件
+    FILE *frotateYuv = fopen("XinWenLianBo_480x360_NV21_rotate.yuv", "wb+");  // 打开 Yuv 文件
+    rotate.SY_SetYuvType(SYYuv_nv21);
+    converter.SY_SetYuvType(SYYuv_nv21);
+    
+    
+    if (NULL == fyuv || NULL == frotateYuv)
+    {
+        printf("Open file failure!\n");
+        free(yuv);
+        free(rotateYuv);
+        yuv = NULL;
+        rotateYuv = NULL;
+        
+        return;
+    }
+    long long sTime     = 0;
+    long long eTime     = 0;
+    long totalTime      = 0;
+    long long startTime = 0;
+    long long endTime   = 0;
+    long interval       = 0;
+    int count           = 0;
+    
+    sTime = currTime();
+    for (int i = 0; i < LOOP_COUNT; i++)
+    {
+        startTime = currTime();
+        while (!feof(fyuv))
+        {
+            // 清空内存
+            memset(yuv, 0, I420_BUFF_SIZE);
+            memset(rotateYuv, 0, I420_BUFF_SIZE);
+            
+            fread(yuv, 1, I420_BUFF_SIZE, fyuv);  // 每次读取一帧 YUV 数据
+            count++;
+            if (342 == count)
+            {
+                memset(rotateYuv, 0, I420_BUFF_SIZE);
+                rotate.SY_RotateYuv(yuv, YUV_WIDTH, YUV_HEIGHT, rotateYuv, SYRotate_antiClockwise, SYRotate_90);
+                fwrite(rotateYuv, I420_BUFF_SIZE, 1, frotateYuv);
+
+                converter.SY_YuvToBmp(rotateYuv, YUV_HEIGHT, YUV_WIDTH, "./BMP/XinWenLianBo_Frame.bmp");
+                break;
+            }
+        }
+        endTime = currTime();
+        
+        fseek(frotateYuv, 0, SEEK_SET);
+        fseek(fyuv, 0, SEEK_SET);
+        
+        interval = endTime - startTime;
+        fflush(stdout);
+        printf("%ld\n", interval);
+    }
+    eTime = currTime();
+    totalTime = eTime - sTime;
+    printf("Total time : %ld\n", totalTime);
+    
+    fclose(frotateYuv);
+    fclose(fyuv);
+    free(rotateYuv);
+    free(yuv);
+    rotateYuv   = NULL;
+    yuv = NULL;
+}
+
+
+
+
 int main(int argc, const char * argv[])
 {
 //    testI420ToRgb565();
@@ -1209,5 +1307,6 @@ int main(int argc, const char * argv[])
 //    testClipYuv();
     
     testClipRgb();
+    testYuvRotate();
     return 0;
 }

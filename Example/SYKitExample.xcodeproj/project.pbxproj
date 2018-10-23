@@ -13,6 +13,7 @@
 		1427FDC8212F048000DE74F9 /* SYYuvToBmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1427FDBF212F048000DE74F9 /* SYYuvToBmp.cpp */; };
 		1427FDC9212F048000DE74F9 /* SYRgbToBmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1427FDC2212F048000DE74F9 /* SYRgbToBmp.cpp */; };
 		1427FDCA212F048000DE74F9 /* SYYuvToRgb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1427FDC6212F048000DE74F9 /* SYYuvToRgb.cpp */; };
+		1452B1B5217F7A5300CAD6D3 /* SYRotate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1452B1B4217F7A5300CAD6D3 /* SYRotate.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,6 +42,8 @@
 		1427FDC5212F048000DE74F9 /* SYYuvToRgb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SYYuvToRgb.h; sourceTree = "<group>"; };
 		1427FDC6212F048000DE74F9 /* SYYuvToRgb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SYYuvToRgb.cpp; sourceTree = "<group>"; };
 		1427FDCB212F04B100DE74F9 /* SYHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SYHeader.h; sourceTree = "<group>"; };
+		1452B1B3217F7A5300CAD6D3 /* SYRotate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SYRotate.h; sourceTree = "<group>"; };
+		1452B1B4217F7A5300CAD6D3 /* SYRotate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SYRotate.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +88,7 @@
 				1427FDCB212F04B100DE74F9 /* SYHeader.h */,
 				1427FDB9212F048000DE74F9 /* SYConverter */,
 				1427FDA7212F03B800DE74F9 /* SYClipper */,
+				1452B1B2217F7A5300CAD6D3 /* SYRotate */,
 			);
 			name = SYKit;
 			path = ../SYKit;
@@ -146,6 +150,15 @@
 			path = SYYuvToRgb;
 			sourceTree = "<group>";
 		};
+		1452B1B2217F7A5300CAD6D3 /* SYRotate */ = {
+			isa = PBXGroup;
+			children = (
+				1452B1B3217F7A5300CAD6D3 /* SYRotate.h */,
+				1452B1B4217F7A5300CAD6D3 /* SYRotate.cpp */,
+			);
+			path = SYRotate;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -202,6 +215,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1452B1B5217F7A5300CAD6D3 /* SYRotate.cpp in Sources */,
 				1427FD9F212F026D00DE74F9 /* main.cpp in Sources */,
 				1427FDB8212F040D00DE74F9 /* SYClipper.cpp in Sources */,
 				1427FDC7212F048000DE74F9 /* SYRgbToYuv.cpp in Sources */,
