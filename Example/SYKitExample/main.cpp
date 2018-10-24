@@ -1192,11 +1192,11 @@ void testRotateYuv()
         printf("Malloc data buffer failure!\n");
         return;
     }
-//    // I420
-//    FILE *fyuv = fopen("XinWenLianBo_480x360_I420.yuv", "rb+");  // 打开 YUv 文件
-//    FILE *frotateYuv = fopen("XinWenLianBo_480x360_I420_rotate.yuv", "wb+");  // 打开 Yuv 文件
-//    rotate.SY_SetYuvType(SYYuv_i420);
-//    converter.SY_SetYuvType(SYYuv_i420);
+    // I420
+    FILE *fyuv = fopen("XinWenLianBo_480x360_I420.yuv", "rb+");  // 打开 YUv 文件
+    FILE *frotateYuv = fopen("XinWenLianBo_480x360_I420_rotate.yuv", "wb+");  // 打开 Yuv 文件
+    rotate.SY_SetYuvType(SYYuv_i420);
+    converter.SY_SetYuvType(SYYuv_i420);
     
 //    // NV12
 //    FILE *fyuv = fopen("XinWenLianBo_480x360_NV12.yuv", "rb+");  // 打开 YUv 文件
@@ -1204,11 +1204,11 @@ void testRotateYuv()
 //    rotate.SY_SetYuvType(SYYuv_nv12);
 //    converter.SY_SetYuvType(SYYuv_nv12);
     
-    // NV21
-    FILE *fyuv = fopen("XinWenLianBo_480x360_NV21.yuv", "rb+");  // 打开 YUv 文件
-    FILE *frotateYuv = fopen("XinWenLianBo_480x360_NV21_rotate.yuv", "wb+");  // 打开 Yuv 文件
-    rotate.SY_SetYuvType(SYYuv_nv21);
-    converter.SY_SetYuvType(SYYuv_nv21);
+//    // NV21
+//    FILE *fyuv = fopen("XinWenLianBo_480x360_NV21.yuv", "rb+");  // 打开 YUv 文件
+//    FILE *frotateYuv = fopen("XinWenLianBo_480x360_NV21_rotate.yuv", "wb+");  // 打开 Yuv 文件
+//    rotate.SY_SetYuvType(SYYuv_nv21);
+//    converter.SY_SetYuvType(SYYuv_nv21);
     
     
     if (NULL == fyuv || NULL == frotateYuv)
@@ -1244,7 +1244,7 @@ void testRotateYuv()
             if (342 == count)
             {
                 memset(rotateYuv, 0, I420_BUFF_SIZE);
-                rotate.SY_RotateYuv(yuv, YUV_WIDTH, YUV_HEIGHT, rotateYuv, SYRotate_antiClockwise, SYRotate_90);
+                rotate.SY_RotateYuv(yuv, YUV_WIDTH, YUV_HEIGHT, rotateYuv, SYRotate_clockwise, SYRotate_270);
                 fwrite(rotateYuv, I420_BUFF_SIZE, 1, frotateYuv);
 
                 converter.SY_YuvToBmp(rotateYuv, YUV_HEIGHT, YUV_WIDTH, "./BMP/XinWenLianBo_Frame.bmp");
@@ -1401,7 +1401,9 @@ int main(int argc, const char * argv[])
 //    testClipYuv();
     
 //    testClipRgb();
-//    testRotateYuv();
-    testMirrorYuv();
+    testRotateYuv();
+    
+//    testMirrorYuv();
+    
     return 0;
 }

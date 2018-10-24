@@ -23,6 +23,9 @@ class SYRotate
 private:
     SYYuvType m_yuvType;          // 旋转 YUV 数据（格式）类型
     
+    /**
+     初始化默认参数
+     */
     void initParam();
     
     /**
@@ -34,7 +37,7 @@ private:
      @param outYuv 旋转后 I420 数据（输出）
      @param direction 旋转方向，参见‘SYRotateDirection’
      @param degree 旋转角度，参见‘SYRotateDegree’
-     @return 转换是否成功，参见‘SYErrType’
+     @return 旋转是否成功，参见‘SYErrType’
      */
     int i420Rotate(unsigned char* inYuv, unsigned int width, unsigned int height, unsigned char* outYuv, SYRotateDirection direction, SYRotateDegree degree) const;
     
@@ -47,7 +50,7 @@ private:
      @param outYuv 旋转后 NV12 数据（输出）
      @param direction 旋转方向，参见‘SYRotateDirection’
      @param degree 旋转角度，参见‘SYRotateDegree’
-     @return 转换是否成功，参见‘SYErrType’
+     @return 旋转是否成功，参见‘SYErrType’
      */
     int nv12Rotate(unsigned char* inYuv, unsigned int width, unsigned int height, unsigned char* outYuv, SYRotateDirection direction, SYRotateDegree degree) const;
     
@@ -60,7 +63,7 @@ private:
      @param outYuv 旋转后 NV21 数据（输出）
      @param direction 旋转方向，参见‘SYRotateDirection’
      @param degree 旋转角度，参见‘SYRotateDegree’
-     @return 转换是否成功，参见‘SYErrType’
+     @return 旋转是否成功，参见‘SYErrType’
      */
     int nv21Rotate(unsigned char* inYuv, unsigned int width, unsigned int height, unsigned char* outYuv, SYRotateDirection direction, SYRotateDegree degree) const;
 
@@ -70,7 +73,7 @@ public:
     ~SYRotate();
     
     /**
-     设置裁剪 YUV 数据格式类型（默认：I420）
+     设置旋转 YUV 数据格式类型（默认：I420）
      
      @param yuvType yuv 数据格式类型
      */
@@ -85,10 +88,9 @@ public:
      @param outYuv 旋转后 YUV 数据（输出）
      @param direction 旋转方向，参见‘SYRotateDirection’
      @param degree 旋转角度，参见‘SYRotateDegree’
-     @return 转换是否成功，参见‘SYErrType’
+     @return 旋转是否成功，参见‘SYErrType’
      */
     SYKIT_API int SY_RotateYuv(unsigned char* inYuv, unsigned int width, unsigned int height, unsigned char* outYuv, SYRotateDirection direction, SYRotateDegree degree) const;
-    
     
 };
 

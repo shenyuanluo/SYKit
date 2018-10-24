@@ -39,19 +39,19 @@ SYKIT_API int SYRotate::SY_RotateYuv(unsigned char* inYuv, unsigned int width, u
     {
         case SYYuv_i420:
         {
-            i420Rotate(inYuv, width, height, outYuv, direction, degree);
+            return i420Rotate(inYuv, width, height, outYuv, direction, degree);
         }
             break;
             
         case SYYuv_nv12:
         {
-            nv12Rotate(inYuv, width, height, outYuv, direction, degree);
+            return nv12Rotate(inYuv, width, height, outYuv, direction, degree);
         }
             break;
             
         case SYYuv_nv21:
         {
-            nv21Rotate(inYuv, width, height, outYuv, direction, degree);
+            return nv21Rotate(inYuv, width, height, outYuv, direction, degree);
         }
             break;
             
@@ -77,26 +77,18 @@ SYKIT_API int SYRotate::i420Rotate(unsigned char* inYuv, unsigned int width, uns
     {
         return SYErr_paramError;
     }
-    const int len          = width * height; // 像素点数
-    unsigned int uWidth    = (width>>1);     // U 数据宽度
-    unsigned int uHeight   = (height>>1);    // U 数据高度
-    unsigned int vWidth    = (width>>1);     // V 数据宽度
-    unsigned int vHeight   = (height>>1);    // V 数据高度
-    unsigned int srcYPos   = 0;      // 数据源（Y 数据）位置
-    unsigned int srcUPos   = len;    // 数据源（U 数据）位置
-    unsigned int srcVPos   = len + (len>>2);    // 数据源（V 数据）位置
-    unsigned int dstYPos   = 0;      // 目标（Y 数据）位置
-    unsigned int dstUPos   = 0;      // 目标（U 数据）位置
-    unsigned int dstVPos   = 0;      // 目标（V 数据）位置
-    unsigned int newYRow   = 0;                // 旋转后的 Y 数据 行下标
-    unsigned int newYCol   = 0;                // 旋转后的 Y 数据 列 下标
-    unsigned int newURow   = 0;                // 旋转后的 UV 数据 行 下标
-    unsigned int newVRow   = 0;                // 旋转后的 V 数据 行 下标
-    unsigned int newUCol   = 0;                // 旋转后的 UV 数据 列 下标
-    unsigned int newVCol  = 0;                // 旋转后的 V 数据 列 下标
-    unsigned int newYWidth = height;           // 旋转后 U 数据宽度
-    unsigned int newUWidth = uHeight;         // 旋转后 U 数据高度
-    unsigned int newVWidth = vHeight;         // 旋转后 U 数据高度
+    const int len         = width * height; // 像素点数
+    unsigned int vStart   = len + (len>>2); // V 数据起始位置
+    unsigned int uvWidth  = (width>>1);     // UV 数据宽度
+    unsigned int uvHeight = (height>>1);    // UV 数据高度
+    unsigned int srcYPos  = 0;              // 数据源（Y 数据）位置
+    unsigned int srcUPos  = len;            // 数据源（U 数据）位置
+    unsigned int srcVPos  = vStart;         // 数据源（V 数据）位置
+    unsigned int dstYPos  = 0;              // 目标（Y 数据）位置
+    unsigned int dstUPos  = 0;              // 目标（U 数据）位置
+    unsigned int dstVPos  = 0;              // 目标（V 数据）位置
+    unsigned int yPos     = 0;              // 旋转后的 Y 数据 列 下标
+    unsigned int uvPos    = 0;              // 旋转后的 UV 数据 列 下标
     
     switch (direction)  // 旋转方向
     {
@@ -106,37 +98,29 @@ SYKIT_API int SYRotate::i420Rotate(unsigned char* inYuv, unsigned int width, uns
             {
                 case SYRotate_90:   // 90°
                 {
-                    // 旋转 Y 数据
-                    for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+                    for(int row = 0; row < height; row++)   // 遍历所有行
                     {
-                        newYCol = height - 1 - oldRow;
-                        for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                        yPos = height - 1 - row;
+                        if (0 == (row&1))
                         {
-                            newYRow         = oldCol;
-                            dstYPos         = newYRow * newYWidth + newYCol;
+                            uvPos = uvHeight - 1 - (row>>1);
+                        }
+                        for(int col = 0; col < width; col++)  // 遍历所有列
+                        {
+                            // 旋转 Y 数据
+                            dstYPos         = col * height + yPos;
                             outYuv[dstYPos] = inYuv[srcYPos++];
-                        }
-                    }
-                    // 旋转 U 数据
-                    for (int oldRow = 0; oldRow < uHeight; oldRow++)
-                    {
-                        newUCol = uHeight - 1 - oldRow;
-                        for (int oldCol = 0; oldCol < uWidth; oldCol++)
-                        {
-                            newURow             = oldCol;
-                            dstUPos             = len + newURow * newUWidth + newUCol;
-                            outYuv[dstUPos]     = inYuv[srcUPos++];
-                        }
-                    }
-                    // 旋转 V 数据
-                    for (int oldRow = 0; oldRow < vHeight; oldRow++)
-                    {
-                        newVCol = vHeight - 1 - oldRow;
-                        for (int oldCol = 0; oldCol < vWidth; oldCol++)
-                        {
-                            newVRow             = oldCol;
-                            dstVPos             = len + (len>>2) + newVRow * newVWidth + newVCol;
-                            outYuv[dstVPos]     = inYuv[srcVPos++];
+                            
+                            if ((0 == (row&1)) && (0 == (col&1)))
+                            {
+                                // 旋转 U 数据
+                                dstUPos         = len + (col>>1) * uvHeight + uvPos;
+                                outYuv[dstUPos] = inYuv[srcUPos++];
+                                
+                                // 旋转 V 数据
+                                dstVPos         = vStart + (col>>1) * uvHeight + uvPos;
+                                outYuv[dstVPos] = inYuv[srcVPos++];
+                            }
                         }
                     }
                 }
@@ -144,40 +128,29 @@ SYKIT_API int SYRotate::i420Rotate(unsigned char* inYuv, unsigned int width, uns
                     
                 case SYRotate_180:  // 180°
                 {
-                    newYWidth   = width;
-                    newUWidth  = uWidth;
-                    newVWidth  = vWidth;
-                    // 旋转 Y 数据
-                    for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+                    for(int row = 0; row < height; row++)   // 遍历所有行
                     {
-                        newYRow = (height - 1 - oldRow) * 1;
-                        for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                        yPos = (height - 1 - row) * width;
+                        if (0 == (row&1))
                         {
-                            newYCol         = width - 1 - oldCol;
-                            dstYPos         = newYRow * newYWidth + newYCol;
+                            uvPos = (uvHeight - 1 - (row>>1))  * uvWidth;
+                        }
+                        for(int col = 0; col < width; col++)  // 遍历所有列
+                        {
+                            // 旋转 Y 数据
+                            dstYPos         = yPos + (width - 1 - col);
                             outYuv[dstYPos] = inYuv[srcYPos++];
-                        }
-                    }
-                    // 旋转 U 数据
-                    for (int oldRow = 0; oldRow < uHeight; oldRow++)
-                    {
-                        newURow = uHeight - 1 - oldRow;
-                        for (int oldCol = 0; oldCol < uWidth; oldCol++)
-                        {
-                            newUCol             = uWidth - 1 - oldCol;
-                            dstUPos             = len + newURow * newUWidth + newUCol;
-                            outYuv[dstUPos]     = inYuv[srcUPos++];
-                        }
-                    }
-                    // 旋转 U 数据
-                    for (int oldRow = 0; oldRow < vHeight; oldRow++)
-                    {
-                        newVRow = vHeight - 1 - oldRow;
-                        for (int oldCol = 0; oldCol < vWidth; oldCol++)
-                        {
-                            newVCol             = vWidth - 1 - oldCol;
-                            dstVPos             = len + (len>>2) + newVRow * newVWidth + newVCol;
-                            outYuv[dstVPos]     = inYuv[srcVPos++];
+                            
+                            if ((0 == (row&1)) && (0 == (col&1)))
+                            {
+                                // 旋转 U 数据
+                                dstUPos         = len + (uvPos + uvWidth - 1 - (col>>1));
+                                outYuv[dstUPos] = inYuv[srcUPos++];
+                                
+                                // 旋转 V 数据
+                                dstVPos         = vStart + (uvPos + uvWidth - 1 - (col>>1));
+                                outYuv[dstVPos] = inYuv[srcVPos++];
+                            }
                         }
                     }
                 }
@@ -185,37 +158,28 @@ SYKIT_API int SYRotate::i420Rotate(unsigned char* inYuv, unsigned int width, uns
                     
                 case SYRotate_270:  // 270°
                 {
-                    // 旋转 Y 数据
-                    for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+                    for(int row = 0; row < height; row++)   // 遍历所有行
                     {
-                        newYCol = oldRow;
-                        for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                        if (0 == (row&1))
                         {
-                            newYRow         = width - 1 - oldCol;
-                            dstYPos         = newYRow * newYWidth + newYCol;
+                            uvPos = (row>>1);
+                        }
+                        for(int col = 0; col < width; col++)  // 遍历所有列
+                        {
+                            // 旋转 Y 数据
+                            dstYPos         = (width - 1 - col) * height + row;
                             outYuv[dstYPos] = inYuv[srcYPos++];
-                        }
-                    }
-                    // 旋转 U 数据
-                    for (int oldRow = 0; oldRow < uHeight; oldRow++)
-                    {
-                        newUCol = oldRow;
-                        for (int oldCol = 0; oldCol < uWidth; oldCol++)
-                        {
-                            newURow             = uWidth - 1 - oldCol;
-                            dstUPos             = len + newURow * newUWidth + newUCol;
-                            outYuv[dstUPos]     = inYuv[srcUPos++];
-                        }
-                    }
-                    // 旋转 V 数据
-                    for (int oldRow = 0; oldRow < vHeight; oldRow++)
-                    {
-                        newVCol = oldRow;
-                        for (int oldCol = 0; oldCol < vWidth; oldCol++)
-                        {
-                            newVRow             = vWidth - 1 - oldCol;
-                            dstVPos             = len + (len>>2) + newVRow * newVWidth + newVCol;
-                            outYuv[dstVPos]     = inYuv[srcVPos++];
+                            
+                            if ((0 == (row&1)) && (0 == (col&1)))
+                            {
+                                // 旋转 U 数据
+                                dstUPos         = len + (uvWidth - 1 - (col>>1)) * uvHeight + uvPos;
+                                outYuv[dstUPos] = inYuv[srcUPos++];
+                                
+                                // 旋转 V 数据
+                                dstVPos         = vStart + (uvWidth - 1 - (col>>1)) * uvHeight + uvPos;
+                                outYuv[dstVPos] = inYuv[srcVPos++];
+                            }
                         }
                     }
                 }
@@ -239,37 +203,28 @@ SYKIT_API int SYRotate::i420Rotate(unsigned char* inYuv, unsigned int width, uns
             {
                 case SYRotate_90:   // 90°
                 {
-                    // 旋转 Y 数据
-                    for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+                    for(int row = 0; row < height; row++)   // 遍历所有行
                     {
-                        newYCol = oldRow;
-                        for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                        if (0 == (row&1))
                         {
-                            newYRow         = width - 1 - oldCol;
-                            dstYPos         = newYRow * newYWidth + newYCol;
+                            uvPos = (row>>1);
+                        }
+                        for(int col = 0; col < width; col++)  // 遍历所有列
+                        {
+                            // 旋转 Y 数据
+                            dstYPos         = (width - 1 - col) * height + row;
                             outYuv[dstYPos] = inYuv[srcYPos++];
-                        }
-                    }
-                    // 旋转 U 数据
-                    for (int oldRow = 0; oldRow < uHeight; oldRow++)
-                    {
-                        newUCol = oldRow;
-                        for (int oldCol = 0; oldCol < uWidth; oldCol++)
-                        {
-                            newURow             = uWidth - 1 - oldCol;
-                            dstUPos             = len + newURow * newUWidth + newUCol;
-                            outYuv[dstUPos]     = inYuv[srcUPos++];
-                        }
-                    }
-                    // 旋转 V 数据
-                    for (int oldRow = 0; oldRow < vHeight; oldRow++)
-                    {
-                        newVCol = oldRow;
-                        for (int oldCol = 0; oldCol < vWidth; oldCol++)
-                        {
-                            newVRow             = vWidth - 1 - oldCol;
-                            dstVPos             = len + (len>>2) + newVRow * newVWidth + newVCol;
-                            outYuv[dstVPos]     = inYuv[srcVPos++];
+                            
+                            if ((0 == (row&1)) && (0 == (col&1)))
+                            {
+                                // 旋转 U 数据
+                                dstUPos         = len + (uvWidth - 1 - (col>>1)) * uvHeight + uvPos;
+                                outYuv[dstUPos] = inYuv[srcUPos++];
+                                
+                                // 旋转 V 数据
+                                dstVPos         = vStart + (uvWidth - 1 - (col>>1)) * uvHeight + uvPos;
+                                outYuv[dstVPos] = inYuv[srcVPos++];
+                            }
                         }
                     }
                 }
@@ -277,40 +232,29 @@ SYKIT_API int SYRotate::i420Rotate(unsigned char* inYuv, unsigned int width, uns
                     
                 case SYRotate_180:  // 180°
                 {
-                    newYWidth   = width;
-                    newUWidth  = uWidth;
-                    newVWidth  = vWidth;
-                    // 旋转 Y 数据
-                    for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+                    for(int row = 0; row < height; row++)   // 遍历所有行
                     {
-                        newYRow = (height - 1 - oldRow) * 1;
-                        for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                        yPos = (height - 1 - row) * width;
+                        if (0 == (row&1))
                         {
-                            newYCol         = width - 1 - oldCol;
-                            dstYPos         = newYRow * newYWidth + newYCol;
+                            uvPos = (uvHeight - 1 - (row>>1))  * uvWidth;
+                        }
+                        for(int col = 0; col < width; col++)  // 遍历所有列
+                        {
+                            // 旋转 Y 数据
+                            dstYPos         = yPos + (width - 1 - col);
                             outYuv[dstYPos] = inYuv[srcYPos++];
-                        }
-                    }
-                    // 旋转 U 数据
-                    for (int oldRow = 0; oldRow < uHeight; oldRow++)
-                    {
-                        newURow = uHeight - 1 - oldRow;
-                        for (int oldCol = 0; oldCol < uWidth; oldCol++)
-                        {
-                            newUCol             = uWidth - 1 - oldCol;
-                            dstUPos             = len + newURow * newUWidth + newUCol;
-                            outYuv[dstUPos]     = inYuv[srcUPos++];
-                        }
-                    }
-                    // 旋转 U 数据
-                    for (int oldRow = 0; oldRow < vHeight; oldRow++)
-                    {
-                        newVRow = vHeight - 1 - oldRow;
-                        for (int oldCol = 0; oldCol < vWidth; oldCol++)
-                        {
-                            newVCol             = vWidth - 1 - oldCol;
-                            dstVPos             = len + (len>>2) + newVRow * newVWidth + newVCol;
-                            outYuv[dstVPos]     = inYuv[srcVPos++];
+                            
+                            if ((0 == (row&1)) && (0 == (col&1)))
+                            {
+                                // 旋转 U 数据
+                                dstUPos         = len + (uvPos + uvWidth - 1 - (col>>1));
+                                outYuv[dstUPos] = inYuv[srcUPos++];
+                                
+                                // 旋转 V 数据
+                                dstVPos         = vStart + (uvPos + uvWidth - 1 - (col>>1));
+                                outYuv[dstVPos] = inYuv[srcVPos++];
+                            }
                         }
                     }
                 }
@@ -318,37 +262,29 @@ SYKIT_API int SYRotate::i420Rotate(unsigned char* inYuv, unsigned int width, uns
                     
                 case SYRotate_270:  // 270°
                 {
-                    // 旋转 Y 数据
-                    for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+                    for(int row = 0; row < height; row++)   // 遍历所有行
                     {
-                        newYCol = height - 1 - oldRow;
-                        for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                        yPos = height - 1 - row;
+                        if (0 == (row&1))
                         {
-                            newYRow         = oldCol;
-                            dstYPos         = newYRow * newYWidth + newYCol;
+                            uvPos = uvHeight - 1 - (row>>1);
+                        }
+                        for(int col = 0; col < width; col++)  // 遍历所有列
+                        {
+                            // 旋转 Y 数据
+                            dstYPos         = col * height + yPos;
                             outYuv[dstYPos] = inYuv[srcYPos++];
-                        }
-                    }
-                    // 旋转 U 数据
-                    for (int oldRow = 0; oldRow < uHeight; oldRow++)
-                    {
-                        newUCol = uHeight - 1 - oldRow;
-                        for (int oldCol = 0; oldCol < uWidth; oldCol++)
-                        {
-                            newURow             = (oldCol<<0);
-                            dstUPos             = len + newURow * newUWidth + newUCol;
-                            outYuv[dstUPos]     = inYuv[srcUPos++];
-                        }
-                    }
-                    // 旋转 V 数据
-                    for (int oldRow = 0; oldRow < vHeight; oldRow++)
-                    {
-                        newVCol = vHeight - 1 - oldRow;
-                        for (int oldCol = 0; oldCol < vWidth; oldCol++)
-                        {
-                            newVRow             = (oldCol<<0);
-                            dstVPos             = len + (len>>2) + newVRow * newVWidth + newVCol;
-                            outYuv[dstVPos]     = inYuv[srcVPos++];
+                            
+                            if ((0 == (row&1)) && (0 == (col&1)))
+                            {
+                                // 旋转 U 数据
+                                dstUPos         = len + (col>>1) * uvHeight + uvPos;
+                                outYuv[dstUPos] = inYuv[srcUPos++];
+                                
+                                // 旋转 V 数据
+                                dstVPos         = vStart + (col>>1) * uvHeight + uvPos;
+                                outYuv[dstVPos] = inYuv[srcVPos++];
+                            }
                         }
                     }
                 }                    break;
@@ -378,19 +314,15 @@ SYKIT_API int SYRotate::nv12Rotate(unsigned char* inYuv, unsigned int width, uns
     {
         return SYErr_paramError;
     }
-    const int len           = width * height;   // 像素点数
-    unsigned int uvWidth    = (width>>1);       // UV 数据宽度
-    unsigned int uvHeight   = (height>>1);      // UV 数据高度
-    unsigned int srcYPos    = 0;                // 数据源（Y 数据）位置
-    unsigned int srcUVPos   = len;              // 数据源（UV 数据）位置
-    unsigned int dstYPos    = 0;                // 目标（Y 数据）位置
-    unsigned int dstUVPos   = 0;                // 目标（UV 数据）位置
-    unsigned int newYRow    = 0;                // 旋转后的 Y 数据 行下标
-    unsigned int newYCol    = 0;                // 旋转后的 Y 数据 列 下标
-    unsigned int newUVRow   = 0;                // 旋转后的 UV 数据 行 下标
-    unsigned int newUVCol   = 0;                // 旋转后的 UV 数据 列 下标
-    unsigned int newYWidth  = height;           // 旋转后 UV 数据宽度
-    unsigned int newUVWidth = uvHeight;         // 旋转后 UV 数据高度
+    const int len         = width * height; // 像素点数
+    unsigned int uvWidth  = (width>>1);     // UV 数据宽度
+    unsigned int uvHeight = (height>>1);    // UV 数据高度
+    unsigned int srcYPos  = 0;              // 数据源（Y 数据）位置
+    unsigned int srcUVPos = len;            // 数据源（UV 数据）位置
+    unsigned int dstYPos  = 0;              // 目标（Y 数据）位置
+    unsigned int dstUVPos = 0;              // 目标（UV 数据）位置
+    unsigned int yPos     = 0;              // 旋转后的 Y 数据 列 下标
+    unsigned int uvPos    = 0;              // 旋转后的 UV 数据 列 下标
     
     switch (direction)  // 旋转方向
     {
@@ -400,27 +332,26 @@ SYKIT_API int SYRotate::nv12Rotate(unsigned char* inYuv, unsigned int width, uns
             {
                 case SYRotate_90:   // 90°
                 {
-                    // 旋转 Y 数据
-                    for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+                    for(int row = 0; row < height; row++)   // 遍历所有行
                     {
-                        newYCol = height - 1 - oldRow;
-                        for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                        yPos = height - 1 - row;
+                        if (0 == (row&1))
                         {
-                            newYRow         = oldCol;
-                            dstYPos         = newYRow * newYWidth + newYCol;
-                            outYuv[dstYPos] = inYuv[srcYPos++];
+                            uvPos = ((uvHeight - 1 - (row>>1))<<1);
                         }
-                    }
-                    // 旋转 UV 数据
-                    for (int oldRow = 0; oldRow < uvHeight; oldRow++)
-                    {
-                        newUVCol = ((uvHeight - 1 - oldRow)<<1);
-                        for (int oldCol = 0; oldCol < uvWidth; oldCol++)
+                        for(int col = 0; col < width; col++)  // 遍历所有列
                         {
-                            newUVRow             = (oldCol<<1);
-                            dstUVPos             = len + newUVRow * newUVWidth + newUVCol;
-                            outYuv[dstUVPos]     = inYuv[srcUVPos++];
-                            outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                            // 旋转 Y 数据
+                            dstYPos         = col * height + yPos;
+                            outYuv[dstYPos] = inYuv[srcYPos++];
+                            
+                            // 旋转 UV 数据
+                            if ((0 == (row&1)) && (0 == (col&1)))
+                            {
+                                dstUVPos             = len + col * uvHeight + uvPos;
+                                outYuv[dstUVPos]     = inYuv[srcUVPos++];
+                                outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                            }
                         }
                     }
                 }
@@ -428,29 +359,26 @@ SYKIT_API int SYRotate::nv12Rotate(unsigned char* inYuv, unsigned int width, uns
                     
                 case SYRotate_180:  // 180°
                 {
-                    newYWidth   = width;
-                    newUVWidth  = uvWidth;
-                    // 旋转 Y 数据
-                    for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+                    for(int row = 0; row < height; row++)   // 遍历所有行
                     {
-                        newYRow = (height - 1 - oldRow) * 1;
-                        for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                        yPos = (height - 1 - row) * width;
+                        if (0 == (row&1))
                         {
-                            newYCol         = width - 1 - oldCol;
-                            dstYPos         = newYRow * newYWidth + newYCol;
-                            outYuv[dstYPos] = inYuv[srcYPos++];
+                            uvPos = (((uvHeight - 1 - (row>>1)) * uvWidth)<<1);
                         }
-                    }
-                    // 旋转 UV 数据
-                    for (int oldRow = 0; oldRow < uvHeight; oldRow++)
-                    {
-                        newUVRow = ((uvHeight - 1 - oldRow)<<1);
-                        for (int oldCol = 0; oldCol < uvWidth; oldCol++)
+                        for(int col = 0; col < width; col++)  // 遍历所有列
                         {
-                            newUVCol             = ((uvWidth - 1 - oldCol) <<1);
-                            dstUVPos             = len + newUVRow * newUVWidth + newUVCol;
-                            outYuv[dstUVPos]     = inYuv[srcUVPos++];
-                            outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                            // 旋转 Y 数据
+                            dstYPos         = yPos + (width - 1 - col);
+                            outYuv[dstYPos] = inYuv[srcYPos++];
+                            
+                            // 旋转 UV 数据
+                            if ((0 == (row&1)) && (0 == (col&1)))
+                            {
+                                dstUVPos             = len + uvPos + (((width>>1) - 1 - (col>>1))<<1);
+                                outYuv[dstUVPos]     = inYuv[srcUVPos++];
+                                outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                            }
                         }
                     }
                 }
@@ -458,27 +386,21 @@ SYKIT_API int SYRotate::nv12Rotate(unsigned char* inYuv, unsigned int width, uns
                     
                 case SYRotate_270:  // 270°
                 {
-                    // 旋转 Y 数据
-                    for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+                    for(int row = 0; row < height; row++)   // 遍历所有行
                     {
-                        newYCol = oldRow;
-                        for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                        for(int col = 0; col < width; col++)  // 遍历所有列
                         {
-                            newYRow         = width - 1 - oldCol;
-                            dstYPos         = newYRow * newYWidth + newYCol;
+                            // 旋转 Y 数据
+                            dstYPos         = (width - 1 - col) * height + row;
                             outYuv[dstYPos] = inYuv[srcYPos++];
-                        }
-                    }
-                    // 旋转 UV 数据
-                    for (int oldRow = 0; oldRow < uvHeight; oldRow++)
-                    {
-                        newUVCol = (oldRow<<1);
-                        for (int oldCol = 0; oldCol < uvWidth; oldCol++)
-                        {
-                            newUVRow             = ((uvWidth - 1 - oldCol)<<1);
-                            dstUVPos             = len + newUVRow * newUVWidth + newUVCol;
-                            outYuv[dstUVPos]     = inYuv[srcUVPos++];
-                            outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                            
+                            // 旋转 UV 数据
+                            if ((0 == (row&1)) && (0 == (col&1)))
+                            {
+                                dstUVPos             = len + (((uvWidth - 1 - (col>>1)) * uvHeight)<<1) + row;
+                                outYuv[dstUVPos]     = inYuv[srcUVPos++];
+                                outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                            }
                         }
                     }
                 }
@@ -502,27 +424,21 @@ SYKIT_API int SYRotate::nv12Rotate(unsigned char* inYuv, unsigned int width, uns
             {
                 case SYRotate_90:   // 90°
                 {
-                    // 旋转 Y 数据
-                    for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+                    for(int row = 0; row < height; row++)   // 遍历所有行
                     {
-                        newYCol = oldRow;
-                        for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                        for(int col = 0; col < width; col++)  // 遍历所有列
                         {
-                            newYRow         = width - 1 - oldCol;
-                            dstYPos         = newYRow * newYWidth + newYCol;
+                            // 旋转 Y 数据
+                            dstYPos         = (width - 1 - col) * height + row;
                             outYuv[dstYPos] = inYuv[srcYPos++];
-                        }
-                    }
-                    // 旋转 UV 数据
-                    for (int oldRow = 0; oldRow < uvHeight; oldRow++)
-                    {
-                        newUVCol = (oldRow<<1);
-                        for (int oldCol = 0; oldCol < uvWidth; oldCol++)
-                        {
-                            newUVRow             = ((uvWidth - 1 - oldCol)<<1);
-                            dstUVPos             = len + newUVRow * newUVWidth + newUVCol;
-                            outYuv[dstUVPos]     = inYuv[srcUVPos++];
-                            outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                            
+                            // 旋转 UV 数据
+                            if ((0 == (row&1)) && (0 == (col&1)))
+                            {
+                                dstUVPos             = len + (((uvWidth - 1 - (col>>1)) * uvHeight)<<1) + row;
+                                outYuv[dstUVPos]     = inYuv[srcUVPos++];
+                                outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                            }
                         }
                     }
                 }
@@ -530,29 +446,26 @@ SYKIT_API int SYRotate::nv12Rotate(unsigned char* inYuv, unsigned int width, uns
                     
                 case SYRotate_180:  // 180°
                 {
-                    newYWidth   = width;
-                    newUVWidth  = uvWidth;
-                    // 旋转 Y 数据
-                    for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+                    for(int row = 0; row < height; row++)   // 遍历所有行
                     {
-                        newYRow = (height - 1 - oldRow) * 1;
-                        for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                        yPos = (height - 1 - row) * width;
+                        if (0 == (row&1))
                         {
-                            newYCol         = width - 1 - oldCol;
-                            dstYPos         = newYRow * newYWidth + newYCol;
-                            outYuv[dstYPos] = inYuv[srcYPos++];
+                            uvPos = (((uvHeight - 1 - (row>>1)) * uvWidth)<<1);
                         }
-                    }
-                    // 旋转 UV 数据
-                    for (int oldRow = 0; oldRow < uvHeight; oldRow++)
-                    {
-                        newUVRow = ((uvHeight - 1 - oldRow)<<1);
-                        for (int oldCol = 0; oldCol < uvWidth; oldCol++)
+                        for(int col = 0; col < width; col++)  // 遍历所有列
                         {
-                            newUVCol             = ((uvWidth - 1 - oldCol) <<1);
-                            dstUVPos             = len + newUVRow * newUVWidth + newUVCol;
-                            outYuv[dstUVPos]     = inYuv[srcUVPos++];
-                            outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                            // 旋转 Y 数据
+                            dstYPos         = yPos + (width - 1 - col);
+                            outYuv[dstYPos] = inYuv[srcYPos++];
+                            
+                            // 旋转 UV 数据
+                            if ((0 == (row&1)) && (0 == (col&1)))
+                            {
+                                dstUVPos             = len + uvPos + (((width>>1) - 1 - (col>>1))<<1);
+                                outYuv[dstUVPos]     = inYuv[srcUVPos++];
+                                outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                            }
                         }
                     }
                 }
@@ -560,27 +473,26 @@ SYKIT_API int SYRotate::nv12Rotate(unsigned char* inYuv, unsigned int width, uns
                     
                 case SYRotate_270:  // 270°
                 {
-                    // 旋转 Y 数据
-                    for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+                    for(int row = 0; row < height; row++)   // 遍历所有行
                     {
-                        newYCol = height - 1 - oldRow;
-                        for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                        yPos = height - 1 - row;
+                        if (0 == (row&1))
                         {
-                            newYRow         = oldCol;
-                            dstYPos         = newYRow * newYWidth + newYCol;
-                            outYuv[dstYPos] = inYuv[srcYPos++];
+                            uvPos = ((uvHeight - 1 - (row>>1))<<1);
                         }
-                    }
-                    // 旋转 UV 数据
-                    for (int oldRow = 0; oldRow < uvHeight; oldRow++)
-                    {
-                        newUVCol = ((uvHeight - 1 - oldRow)<<1);
-                        for (int oldCol = 0; oldCol < uvWidth; oldCol++)
+                        for(int col = 0; col < width; col++)  // 遍历所有列
                         {
-                            newUVRow             = (oldCol<<1);
-                            dstUVPos             = len + newUVRow * newUVWidth + newUVCol;
-                            outYuv[dstUVPos]     = inYuv[srcUVPos++];
-                            outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                            // 旋转 Y 数据
+                            dstYPos         = col * height + yPos;
+                            outYuv[dstYPos] = inYuv[srcYPos++];
+                            
+                            // 旋转 UV 数据
+                            if ((0 == (row&1)) && (0 == (col&1)))
+                            {
+                                dstUVPos             = len + col * uvHeight + uvPos;
+                                outYuv[dstUVPos]     = inYuv[srcUVPos++];
+                                outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                            }
                         }
                     }
                 }
