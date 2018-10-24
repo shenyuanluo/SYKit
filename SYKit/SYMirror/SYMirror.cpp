@@ -45,13 +45,13 @@ SYKIT_API int SYMirror::SY_MirrorYuv(unsigned char* inYuv, unsigned int width, u
             
         case SYYuv_nv12:
         {
-            return nv21Mirror(inYuv, width, height, outYuv, direction);
+            return nv12Mirror(inYuv, width, height, outYuv, direction);
         }
             break;
             
         case SYYuv_nv21:
         {
-            return nv12Mirror(inYuv, width, height, outYuv, direction);
+            return nv21Mirror(inYuv, width, height, outYuv, direction);
         }
             break;
             
@@ -76,62 +76,45 @@ int SYMirror::i420Mirror(unsigned char* inYuv, unsigned int width, unsigned int 
     {
         return SYErr_paramError;
     }
-    const int len           = width * height;   // 像素点数
-    unsigned int uWidth     = (width>>1);       // U 数据宽度
-    unsigned int vWidth     = (width>>1);       // V 数据宽度
-    unsigned int uHeight    = (height>>1);      // U 数据高度
-    unsigned int vHeight    = (height>>1);      // V 数据高度
-    unsigned int srcYPos    = 0;                // 数据源（Y 数据）位置
-    unsigned int srcUPos   = len;               // 数据源（U 数据）位置
-    unsigned int srcVPos   = len + (len>>2);    // 数据源（V 数据）位置
-    unsigned int dstYPos   = 0;                 // 目标（Y 数据）位置
-    unsigned int dstUPos   = 0;                 // 目标（U 数据）位置
-    unsigned int dstVPos   = 0;                 // 目标（V 数据）位置
-    unsigned int newYRow   = 0;                 // 镜像后的 Y 数据 行 下标
-    unsigned int newYCol   = 0;                 // 镜像后的 Y 数据 列 下标
-    unsigned int newURow   = 0;                 // 镜像后的 U 数据 行 下标
-    unsigned int newVRow   = 0;                 // 镜像后的 Y 数据 行 下标
-    unsigned int newUCol   = 0;                 // 镜像后的 U 数据 列 下标
-    unsigned int newVCol   = 0;                 // 镜像后的 V 数据 列 下标
-    unsigned int newYWidth = width;             // 镜像后 Y 数据宽度
-    unsigned int newUWidth = uWidth;            // 镜像后 U 数据宽度
-    unsigned int newVWidth = vWidth;            // 镜像后 V 数据宽度
+    const int len               = width * height; // 像素点数
+    unsigned int uStart         = len;            // U 数据起始位置
+    unsigned int vStart         = len + (len>>2); // V 数据起始位置
+    unsigned int uvWidth        = (width>>1);     // U、V 数据宽度
+    unsigned int uvHeight       = (height>>1);    // U、V 数据高度
+    unsigned int yWidthMaxIdx   = width - 1;      // Y 数据宽度最大下标
+    unsigned int yHeightMaxIdx  = height - 1;     // Y 数据高度最大下标
+    unsigned int uvWidthMaxIdx  = uvWidth - 1;    // U、V 数据宽度最大下标
+    unsigned int uvHeightMaxIdx = uvHeight - 1;   // U、V 数据高度最大下标
+    unsigned int srcYPos        = 0;              // 数据源（Y 数据）位置
+    unsigned int srcUPos        = len;            // 数据源（U 数据）位置
+    unsigned int srcVPos        = vStart;         // 数据源（V 数据）位置
+    unsigned int dstYPos        = 0;              // 目标（Y 数据）位置
+    unsigned int dstUVPos       = 0;              // 目标（U、V 数据）位置
+    unsigned int yPos           = 0;              // 镜像后的 Y 数据 行 下标
+    unsigned int uvPos          = 0;              // 镜像后的 U 数据 行 下标
     
     switch (direction)  // 镜像方向
     {
         case SYMirror_horizontal:    // 水平镜像
         {
-            // 镜像 Y 数据
-            for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+            for(int row = 0; row < height; row++)   // 遍历所有行
             {
-                newYRow = oldRow;
-                for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                yPos = row * width;
+                if (0 == (row&1))
                 {
-                    newYCol         = width - 1 - oldCol;
-                    dstYPos         = newYRow * newYWidth + newYCol;
-                    outYuv[dstYPos] = inYuv[srcYPos++];
+                    uvPos = (row>>1) * uvWidth;
                 }
-            }
-            // 镜像 U 数据
-            for (int oldRow = 0; oldRow < uHeight; oldRow++)
-            {
-                newURow = oldRow;
-                for (int oldCol = 0; oldCol < uWidth; oldCol++)
+                for(int col = 0; col < width; col++)  // 遍历所有列
                 {
-                    newUCol             = uWidth - 1 - oldCol;
-                    dstUPos             = len + newURow * newUWidth + newUCol;
-                    outYuv[dstUPos]     = inYuv[srcUPos++];
-                }
-            }
-            // 镜像 V 数据
-            for (int oldRow = 0; oldRow < vHeight; oldRow++)
-            {
-                newVRow = oldRow;
-                for (int oldCol = 0; oldCol < vWidth; oldCol++)
-                {
-                    newVCol             = vWidth - 1 - oldCol;
-                    dstVPos             = len + (len>>2) + newVRow * newVWidth + newVCol;
-                    outYuv[dstVPos]     = inYuv[srcVPos++];
+                    dstYPos         = yPos + (yWidthMaxIdx - col);
+                    outYuv[dstYPos] = inYuv[srcYPos++]; // 镜像 Y 数据
+                    
+                    if ((0 == (row&1)) && (0 == (col&1)))
+                    {
+                        dstUVPos                  = uvPos + (uvWidthMaxIdx - (col>>1));
+                        outYuv[uStart + dstUVPos] = inYuv[srcUPos++];   // 镜像 U 数据
+                        outYuv[vStart + dstUVPos] = inYuv[srcVPos++];   // 镜像 V 数据
+                    }
                 }
             }
         }
@@ -139,37 +122,24 @@ int SYMirror::i420Mirror(unsigned char* inYuv, unsigned int width, unsigned int 
             
         case SYMirror_vertical:    // 垂直镜像
         {
-            // 镜像 Y 数据
-            for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+            for(int row = 0; row < height; row++)   // 遍历所有行
             {
-                newYRow = height - 1 - oldRow;
-                for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                yPos = (yHeightMaxIdx - row) * width;
+                if (0 == (row&1))
                 {
-                    newYCol         = oldCol;
-                    dstYPos         = newYRow * newYWidth + newYCol;
-                    outYuv[dstYPos] = inYuv[srcYPos++];
+                    uvPos = (uvHeightMaxIdx - (row>>1)) * uvWidth;
                 }
-            }
-            // 镜像 U 数据
-            for (int oldRow = 0; oldRow < uHeight; oldRow++)
-            {
-                newURow = uHeight - 1 - oldRow;
-                for (int oldCol = 0; oldCol < uWidth; oldCol++)
+                for(int col = 0; col < width; col++)  // 遍历所有列
                 {
-                    newUCol             = oldCol;
-                    dstUPos             = len + newURow * newUWidth + newUCol;
-                    outYuv[dstUPos]     = inYuv[srcUPos++];
-                }
-            }
-            // 镜像 V 数据
-            for (int oldRow = 0; oldRow < vHeight; oldRow++)
-            {
-                newVRow = vHeight - 1 - oldRow;
-                for (int oldCol = 0; oldCol < vWidth; oldCol++)
-                {
-                    newVCol             = oldCol;
-                    dstVPos             = len + (len>>2) + newVRow * newVWidth + newVCol;
-                    outYuv[dstVPos]     = inYuv[srcVPos++];
+                    dstYPos         = yPos + col;
+                    outYuv[dstYPos] = inYuv[srcYPos++]; // 镜像 Y 数据
+                    
+                    if ((0 == (row&1)) && (0 == (col&1)))
+                    {
+                        dstUVPos                  =  uvPos + (col>>1);
+                        outYuv[uStart + dstUVPos] = inYuv[srcUPos++];   // 镜像 U 数据
+                        outYuv[vStart + dstUVPos] = inYuv[srcVPos++];   // 镜像 V 数据
+                    }
                 }
             }
         }
@@ -188,45 +158,44 @@ int SYMirror::nv12Mirror(unsigned char* inYuv, unsigned int width, unsigned int 
     {
         return SYErr_paramError;
     }
-    const int len           = width * height;   // 像素点数
-    unsigned int uvWidth    = (width>>1);       // UV 数据宽度
-    unsigned int uvHeight   = (height>>1);      // UV 数据高度
-    unsigned int srcYPos    = 0;                // 数据源（Y 数据）位置
-    unsigned int srcUVPos   = len;              // 数据源（UV 数据）位置
-    unsigned int dstYPos    = 0;                // 目标（Y 数据）位置
-    unsigned int dstUVPos   = 0;                // 目标（UV 数据）位置
-    unsigned int newYRow    = 0;                // 镜像后的 Y 数据 行下标
-    unsigned int newYCol    = 0;                // 镜像后的 Y 数据 列 下标
-    unsigned int newUVRow   = 0;                // 镜像后的 UV 数据 行 下标
-    unsigned int newUVCol   = 0;                // 镜像后的 UV 数据 列 下标
-    unsigned int newYWidth  = width;           // 镜像后 UV 数据宽度
-    unsigned int newUVWidth = uvWidth;         // 镜像后 UV 数据高度
+    const int len               = width * height;   // 像素点数
+    unsigned int uvWidth        = (width>>1);       // UV 数据宽度
+    unsigned int uvHeight       = (height>>1);      // UV 数据高度
+    unsigned int yWidthMaxIdx   = width - 1;        // Y 数据宽度最大下标
+    unsigned int yHeightMaxIdx  = height - 1;       // Y 数据高度最大下标
+    unsigned int uvWidthMaxIdx  = uvWidth - 1;      // U、V 数据宽度最大下标
+    unsigned int uvHeightMaxIdx = uvHeight - 1;     // U、V 数据高度最大下标
+    unsigned int srcYPos        = 0;                // 数据源（Y 数据）位置
+    unsigned int srcUVPos       = len;              // 数据源（UV 数据）位置
+    unsigned int dstYPos        = 0;                // 目标（Y 数据）位置
+    unsigned int dstUVPos       = 0;                // 目标（UV 数据）位置
+    unsigned int yPos           = 0;                // 镜像后的 Y 数据 行下标
+    unsigned int uvPos          = 0;                // 镜像后的 UV 数据 行 下标
     
     switch (direction)  // 镜像方向
     {
         case SYMirror_horizontal:    // 水平镜像
         {
-            // 镜像 Y 数据
-            for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+            for(int row = 0; row < height; row++)   // 遍历所有行
             {
-                newYRow = oldRow;
-                for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                yPos = row * width;
+                if (0 == (row&1))
                 {
-                    newYCol         = width - 1 - oldCol;
-                    dstYPos         = newYRow * newYWidth + newYCol;
-                    outYuv[dstYPos] = inYuv[srcYPos++];
+                    uvPos = row * uvWidth ;
                 }
-            }
-            // 镜像 UV 数据
-            for (int oldRow = 0; oldRow < uvHeight; oldRow++)
-            {
-                newUVRow = ((oldRow)<<1);
-                for (int oldCol = 0; oldCol < uvWidth; oldCol++)
+                for(int col = 0; col < width; col++)  // 遍历所有列
                 {
-                    newUVCol             = ((uvWidth - 1 - oldCol)<<1);
-                    dstUVPos             = len + newUVRow * newUVWidth + newUVCol;
-                    outYuv[dstUVPos]     = inYuv[srcUVPos++];
-                    outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                    // 镜像 Y 数据
+                    dstYPos         = yPos + (yWidthMaxIdx - col);
+                    outYuv[dstYPos] = inYuv[srcYPos++];
+                    
+                    if ((0 == (row&1)) && (0 == (col&1)))
+                    {
+                        // 镜像 UV 数据
+                        dstUVPos             = len + uvPos + ((uvWidthMaxIdx - (col>>1))<<1);
+                        outYuv[dstUVPos]     = inYuv[srcUVPos++];
+                        outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                    }
                 }
             }
         }
@@ -234,27 +203,26 @@ int SYMirror::nv12Mirror(unsigned char* inYuv, unsigned int width, unsigned int 
             
         case SYMirror_vertical:    // 垂直镜像
         {
-            // 镜像 Y 数据
-            for(int oldRow = 0; oldRow < height; oldRow++)   // 遍历所有行
+            for(int row = 0; row < height; row++)   // 遍历所有行
             {
-                newYRow = height - 1 - oldRow;
-                for(int oldCol = 0; oldCol < width; oldCol++)  // 遍历所有列
+                yPos = (yHeightMaxIdx - row) * width;
+                if (0 == (row&1))
                 {
-                    newYCol         = oldCol;
-                    dstYPos         = newYRow * newYWidth + newYCol;
-                    outYuv[dstYPos] = inYuv[srcYPos++];
+                    uvPos = ((uvHeightMaxIdx - (row>>1))<<1) * uvWidth;
                 }
-            }
-            // 镜像 UV 数据
-            for (int oldRow = 0; oldRow < uvHeight; oldRow++)
-            {
-                newUVRow = ((uvHeight - 1 - oldRow)<<1);
-                for (int oldCol = 0; oldCol < uvWidth; oldCol++)
+                for(int col = 0; col < width; col++)  // 遍历所有列
                 {
-                    newUVCol             = ((oldCol)<<1);
-                    dstUVPos             = len + newUVRow * newUVWidth + newUVCol;
-                    outYuv[dstUVPos]     = inYuv[srcUVPos++];
-                    outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                    // 镜像 Y 数据
+                    dstYPos         = yPos + col;
+                    outYuv[dstYPos] = inYuv[srcYPos++];
+                    
+                    if ((0 == (row&1)) && (0 == (col&1)))
+                    {
+                        // 镜像 UV 数据
+                        dstUVPos             = len + uvPos + col;
+                        outYuv[dstUVPos]     = inYuv[srcUVPos++];   
+                        outYuv[dstUVPos + 1] = inYuv[srcUVPos++];
+                    }
                 }
             }
         }

@@ -1338,7 +1338,7 @@ void testMirrorYuv()
             if (342 == count)
             {
                 memset(mirrorYuv, 0, I420_BUFF_SIZE);
-                mirror.SY_MirrorYuv(yuv, YUV_WIDTH, YUV_HEIGHT, mirrorYuv, SYMirror_vertical);
+                mirror.SY_MirrorYuv(yuv, YUV_WIDTH, YUV_HEIGHT, mirrorYuv, SYMirror_horizontal);
                 fwrite(mirrorYuv, I420_BUFF_SIZE, 1, fmirrorYuv);
                 
                 converter.SY_YuvToBmp(mirrorYuv, YUV_WIDTH, YUV_HEIGHT, "./BMP/XinWenLianBo_Frame.bmp");
@@ -1401,9 +1401,9 @@ int main(int argc, const char * argv[])
 //    testClipYuv();
     
 //    testClipRgb();
-    testRotateYuv();
+//    testRotateYuv();
     
-//    testMirrorYuv();
+    testMirrorYuv();
     
     return 0;
 }
