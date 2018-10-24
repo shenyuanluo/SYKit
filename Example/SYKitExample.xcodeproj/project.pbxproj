@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		140EEEBD21801BFF0027EFE3 /* SYMirror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 140EEEBB21801BFF0027EFE3 /* SYMirror.cpp */; };
 		1427FD9F212F026D00DE74F9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1427FD9E212F026D00DE74F9 /* main.cpp */; };
 		1427FDB8212F040D00DE74F9 /* SYClipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1427FDB6212F040D00DE74F9 /* SYClipper.cpp */; };
 		1427FDC7212F048000DE74F9 /* SYRgbToYuv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1427FDBD212F048000DE74F9 /* SYRgbToYuv.cpp */; };
@@ -29,6 +30,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		140EEEBB21801BFF0027EFE3 /* SYMirror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SYMirror.cpp; sourceTree = "<group>"; };
+		140EEEBC21801BFF0027EFE3 /* SYMirror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SYMirror.h; sourceTree = "<group>"; };
 		1427FD9B212F026D00DE74F9 /* SYKitExample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SYKitExample; sourceTree = BUILT_PRODUCTS_DIR; };
 		1427FD9E212F026D00DE74F9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		1427FDB6212F040D00DE74F9 /* SYClipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SYClipper.cpp; sourceTree = "<group>"; };
@@ -57,6 +60,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		140EEEBA21801BFF0027EFE3 /* SYMirror */ = {
+			isa = PBXGroup;
+			children = (
+				140EEEBB21801BFF0027EFE3 /* SYMirror.cpp */,
+				140EEEBC21801BFF0027EFE3 /* SYMirror.h */,
+			);
+			path = SYMirror;
+			sourceTree = "<group>";
+		};
 		1427FD92212F026D00DE74F9 = {
 			isa = PBXGroup;
 			children = (
@@ -88,6 +100,7 @@
 				1427FDCB212F04B100DE74F9 /* SYHeader.h */,
 				1427FDB9212F048000DE74F9 /* SYConverter */,
 				1427FDA7212F03B800DE74F9 /* SYClipper */,
+				140EEEBA21801BFF0027EFE3 /* SYMirror */,
 				1452B1B2217F7A5300CAD6D3 /* SYRotate */,
 			);
 			name = SYKit;
@@ -219,6 +232,7 @@
 				1427FD9F212F026D00DE74F9 /* main.cpp in Sources */,
 				1427FDB8212F040D00DE74F9 /* SYClipper.cpp in Sources */,
 				1427FDC7212F048000DE74F9 /* SYRgbToYuv.cpp in Sources */,
+				140EEEBD21801BFF0027EFE3 /* SYMirror.cpp in Sources */,
 				1427FDC8212F048000DE74F9 /* SYYuvToBmp.cpp in Sources */,
 				1427FDC9212F048000DE74F9 /* SYRgbToBmp.cpp in Sources */,
 				1427FDCA212F048000DE74F9 /* SYYuvToRgb.cpp in Sources */,

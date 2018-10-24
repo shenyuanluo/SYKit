@@ -79,6 +79,27 @@ typedef enum __syRotateDirection {
     SYRotate_antiClockwise  = 1,    // 逆时针
 }SYRotateDirection;
 
+/*
+ （帧画面）镜像方向类型
+ SYMirror_horizontal：水平镜像
+ 
+        1   2   3   4   5                       5   4   3   2   1
+        6   7   8   9   10      -------->       10  9   8   7   6
+        11  12  13  14  15                      15  14  13  12  11
+ 
+ 
+ SYMirror_vertical：垂直镜像
+ 
+        1   2   3   4   5                       11  12  13  14  15
+        6   7   8   9   10      -------->       6   7   8   9   10
+        11  12  13  14  15                      1   2   3   4   5
+ */
+typedef enum __syMirrorDirection {
+    SYMirror_horizontal     = 0,    // 水平镜像
+    SYMirror_vertical       = 1,    // 垂直镜像
+}SYMirrorDirection;
+
+
 /* 错误码类型 */
 typedef enum __syErrType {
     SYErr_success           = 0,    // 成功
