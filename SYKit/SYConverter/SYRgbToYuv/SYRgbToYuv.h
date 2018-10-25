@@ -6,6 +6,11 @@
 //  Copyright © 2018年 http://blog.shenyuanluo.com/ All rights reserved.
 //
 
+
+/*
+ RGB 转 YUV
+ */
+
 #ifndef SYRgbToYuv_h
 #define SYRgbToYuv_h
 
@@ -97,14 +102,6 @@ public:
      */
     SYKIT_API void SY_SetMatrixType(SYMatrixType mType);
     
-    /* RGB565 内存布局（注意大小端）
-                     R                     G                     B
-           +---------------------------------------------------------------+
-     高字节 | R | R | R | R | R | G | G | G | G | G | G | B | B | B | B | B |  低字节
-           +---------------------------------------------------------------+
-             0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
-     */
-    
     /**
      RGB565 转 I420
      
@@ -137,15 +134,6 @@ public:
      @return 转换是否成功，参见‘SYErrType’
      */
     SYKIT_API int SY_Rgb565ToNv21(unsigned char* inRgb, unsigned int width, unsigned int height, unsigned char* outYuv) const;
-    
-    
-    /* RGB24 内存布局（注意大小端）
-                           B                               G                               R
-           +-----------------------------------------------------------------------------------------------+
-     高字节 | B | B | B | B | B | B | B | B | G | G | G | G | G | G | G | G | R | R | R | R | R | R | R | R |   低字节
-           +-----------------------------------------------------------------------------------------------+
-             0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23
-     */
     
     /**
      RGB24 转 I420

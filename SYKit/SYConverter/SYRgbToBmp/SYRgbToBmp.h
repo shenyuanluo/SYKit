@@ -6,6 +6,11 @@
 //  Copyright © 2018年 http://blog.shenyuanluo.com/ All rights reserved.
 //
 
+
+/*
+ RGB 保存为 BMP 图像
+ */
+
 #ifndef SYRgbToBmp_h
 #define SYRgbToBmp_h
 

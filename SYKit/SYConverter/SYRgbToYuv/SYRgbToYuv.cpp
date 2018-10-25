@@ -102,28 +102,6 @@ SYKIT_API int SYRgbToYuv::SY_Rgb565ToI420(unsigned char* inRgb, unsigned int wid
             
             rgb2yuv(r, g, b, &y, &u, &v);
             
-            /**
-             I420 内存分布
-                            W
-                 +--------------------+
-                 |Y0Y1Y2Y3...         |
-                 |...                 |
-                 |                    |   H
-                 |                    |
-                 |                    |
-                 |                    |
-                 +--------------------+
-                 |U0U1...   |
-                 |...       |   H/2
-                 |          |
-                 +----------+
-                 |V0V1...   |
-                 |...       |  H/2
-                 |          |
-                 +----------+
-                     w/2
-             */
-            
             yData[yIdx++] = y;  // 写入 Y 数据
             if (1 == isUVRow && 1 == isUVCol)
             {
@@ -197,24 +175,6 @@ SYKIT_API int SYRgbToYuv::SY_Rgb565ToNv12(unsigned char* inRgb, unsigned int wid
             b = (colorLow & 0x1F)<<3;   // 获取低字节高 5 个bit，作为 B 的高 5 位
             
             rgb2yuv(r, g, b, &y, &u, &v);
-            
-            /**
-             NV12 内存分布
-                       W
-             +--------------------+
-             |Y0Y1Y2Y3...         |
-             |...                 |
-             |                    |   H
-             |                    |
-             |                    |
-             |                    |
-             +--------------------+
-             |U0V0U1V1...         |
-             |...                 |   H/2
-             |                    |
-             +--------------------+
-                       W
-             */
             
             yData[yIdx++] = y;  // 写入 Y 数据
             if (1 == isUVRow && 1 == isUVCol)
@@ -291,24 +251,6 @@ SYKIT_API int SYRgbToYuv::SY_Rgb565ToNv21(unsigned char* inRgb, unsigned int wid
             
             rgb2yuv(r, g, b, &y, &u, &v);
             
-            /**
-             NV21 内存分布
-                       W
-             +--------------------+
-             |Y0Y1Y2Y3...         |
-             |...                 |
-             |                    |   H
-             |                    |
-             |                    |
-             |                    |
-             +--------------------+
-             |V0U0V1U1...         |
-             |...                 |   H/2
-             |                    |
-             +--------------------+
-                       W
-             */
-            
             yData[yIdx++] = y;  // 写入 Y 数据
             if (1 == isVURow && 1 == isVUCol)
             {
@@ -378,28 +320,6 @@ SYKIT_API int SYRgbToYuv::SY_Rgb24ToI420(unsigned char* inRgb, unsigned int widt
                     break;
             }
             rgb2yuv(r, g, b, &y, &u, &v);
-            
-            /**
-             I420 内存分布
-                            W
-                 +--------------------+
-                 |Y0Y1Y2Y3...         |
-                 |...                 |
-                 |                    |   H
-                 |                    |
-                 |                    |
-                 |                    |
-                 +--------------------+
-                 |U0U1...   |
-                 |...       |   H/2
-                 |          |
-                 +----------+
-                 |V0V1...   |
-                 |...       |  H/2
-                 |          |
-                 +----------+
-                     w/2
-             */
 
             yData[yIdx++] = y;  // 写入 Y 数据
             if (1 == isUVRow && 1 == isUVCol)
@@ -467,24 +387,6 @@ SYKIT_API int SYRgbToYuv::SY_Rgb24ToNv12(unsigned char* inRgb, unsigned int widt
             }
             rgb2yuv(r, g, b, &y, &u, &v);
             
-            /**
-             NV12 内存分布
-                       W
-             +--------------------+
-             |Y0Y1Y2Y3...         |
-             |...                 |
-             |                    |   H
-             |                    |
-             |                    |
-             |                    |
-             +--------------------+
-             |U0V0U1V1...         |
-             |...                 |   H/2
-             |                    |
-             +--------------------+
-                       W
-             */
-            
             yData[yIdx++] = y;  // 写入 Y 数据
             if (1 == isUVRow && 1 == isUVCol)
             {
@@ -551,24 +453,6 @@ SYKIT_API int SYRgbToYuv::SY_Rgb24ToNv21(unsigned char* inRgb, unsigned int widt
                     break;
             }
             rgb2yuv(r, g, b, &y, &u, &v);
-            
-            /**
-             NV21 内存分布
-                       W
-             +--------------------+
-             |Y0Y1Y2Y3...         |
-             |...                 |
-             |                    |   H
-             |                    |
-             |                    |
-             |                    |
-             +--------------------+
-             |V0U0V1U1...         |
-             |...                 |   H/2
-             |                    |
-             +--------------------+
-                       W
-             */
             
             yData[yIdx++] = y;  // 写入 Y 数据
             if (1 == isVURow && 1 == isVUCol)

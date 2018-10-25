@@ -34,6 +34,9 @@ private:
     unsigned char*      m_dstRgb;           // 裁剪后的 RGB 数据缓冲
     unsigned int        m_dstRgbLen;        // 裁剪后的 RGB 数据大小
     
+    /**
+     初始化默认参数
+     */
     void initParam();
 
     

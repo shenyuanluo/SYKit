@@ -17,6 +17,7 @@
 
 #include "SYRotate.h"
 #include "SYMirror.h"
+#include "SYYuvConverter.h"
 
 
 #define YUV_WIDTH  480              // 视频帧宽
@@ -1178,6 +1179,423 @@ void testClipRgb()
 }
 
 
+#pragma mark - YUV 格式相互转换
+#pragma mark -- I420 转 NV12
+void testI420ToNv12()
+{
+    SYYuvConverter converter;
+    
+    unsigned char *i420 = (unsigned char *)malloc(I420_BUFF_SIZE);
+    unsigned char *nv12 = (unsigned char *)malloc(NV12_BUFF_SIZE);
+    if (NULL == i420 || NULL == nv12)
+    {
+        printf("Malloc data buffer failure!\n");
+        return;
+    }
+    FILE *fI420 = fopen("XinWenLianBo_480x360_I420.yuv", "rb+");  // 打开 I420 文件
+    FILE *fNv12 = fopen("XinWenLianBo_480x360_NV12.yuv", "wb+");  // 打开 NV12 文件
+    
+    if (NULL == fI420 || NULL == fNv12)
+    {
+        printf("Open file failure!\n");
+        free(i420);
+        free(nv12);
+        i420 = NULL;
+        nv12 = NULL;
+        
+        return;
+    }
+    long long sTime     = 0;
+    long long eTime     = 0;
+    long totalTime      = 0;
+    long long startTime = 0;
+    long long endTime   = 0;
+    long interval       = 0;
+    
+    sTime = currTime();
+    for (int i = 0; i < LOOP_COUNT; i++)
+    {
+        startTime = currTime();
+        while (!feof(fI420))
+        {
+            // 清空内存
+            memset(i420, 0, I420_BUFF_SIZE);
+            memset(nv12, 0, NV12_BUFF_SIZE);
+            
+            fread(i420, 1, I420_BUFF_SIZE, fI420);  // 每次读取一帧 YUV 数据
+            
+            converter.SY_I420ToNv12(i420, YUV_WIDTH, YUV_HEIGHT, nv12); // 转换成 NV12
+            
+            fwrite(nv12, NV12_BUFF_SIZE, 1, fNv12);
+        }
+        endTime = currTime();
+        
+        fseek(fI420, 0, SEEK_SET);
+        fseek(fNv12, 0, SEEK_SET);
+        
+        interval = endTime - startTime;
+        fflush(stdout);
+        printf("%ld\n", interval);
+    }
+    eTime = currTime();
+    totalTime = eTime - sTime;
+    printf("Total time : %ld\n", totalTime);
+    
+    fclose(fI420);
+    fclose(fNv12);
+    free(i420);
+    free(nv12);
+    i420   = NULL;
+    nv12 = NULL;
+}
+
+#pragma mark -- I420 转 NV21
+void testI420ToNv21()
+{
+    SYYuvConverter converter;
+    
+    unsigned char *i420 = (unsigned char *)malloc(I420_BUFF_SIZE);
+    unsigned char *nv21 = (unsigned char *)malloc(NV21_BUFF_SIZE);
+    if (NULL == i420 || NULL == nv21)
+    {
+        printf("Malloc data buffer failure!\n");
+        return;
+    }
+    FILE *fI420   = fopen("XinWenLianBo_480x360_I420.yuv", "rb+");  // 打开 I420 文件
+    FILE *fNv21 = fopen("XinWenLianBo_480x360_NV21.yuv", "wb+");  // 打开 NV21 文件
+    
+    if (NULL == fI420 || NULL == fNv21)
+    {
+        printf("Open file failure!\n");
+        free(i420);
+        free(nv21);
+        i420 = NULL;
+        nv21 = NULL;
+        
+        return;
+    }
+    long long sTime     = 0;
+    long long eTime     = 0;
+    long totalTime      = 0;
+    long long startTime = 0;
+    long long endTime   = 0;
+    long interval       = 0;
+    
+    sTime = currTime();
+    for (int i = 0; i < LOOP_COUNT; i++)
+    {
+        startTime = currTime();
+        while (!feof(fI420))
+        {
+            // 清空内存
+            memset(i420, 0, I420_BUFF_SIZE);
+            memset(nv21, 0, NV21_BUFF_SIZE);
+            
+            fread(i420, 1, I420_BUFF_SIZE, fI420);  // 每次读取一帧 YUV 数据
+            
+            converter.SY_I420ToNv21(i420, YUV_WIDTH, YUV_HEIGHT, nv21); // 转换成 NV21
+            
+            fwrite(nv21, NV21_BUFF_SIZE, 1, fNv21);
+        }
+        endTime = currTime();
+        
+        fseek(fI420, 0, SEEK_SET);
+        fseek(fNv21, 0, SEEK_SET);
+        
+        interval = endTime - startTime;
+        fflush(stdout);
+        printf("%ld\n", interval);
+    }
+    eTime = currTime();
+    totalTime = eTime - sTime;
+    printf("Total time : %ld\n", totalTime);
+    
+    fclose(fI420);
+    fclose(fNv21);
+    free(i420);
+    free(nv21);
+    i420   = NULL;
+    nv21 = NULL;
+}
+
+#pragma mark -- NV12 转 I420
+void testNv12ToI420()
+{
+    SYYuvConverter converter;
+    
+    unsigned char *i420 = (unsigned char *)malloc(I420_BUFF_SIZE);
+    unsigned char *nv12 = (unsigned char *)malloc(NV12_BUFF_SIZE);
+    if (NULL == i420 || NULL == nv12)
+    {
+        printf("Malloc data buffer failure!\n");
+        return;
+    }
+    FILE *fI420   = fopen("XinWenLianBo_480x360_I420.yuv", "wb+");  // 打开 I420 文件
+    FILE *fNv12 = fopen("XinWenLianBo_480x360_NV12.yuv", "rb+");  // 打开 NV12 文件
+    
+    if (NULL == fI420 || NULL == fNv12)
+    {
+        printf("Open file failure!\n");
+        free(i420);
+        free(nv12);
+        i420 = NULL;
+        nv12 = NULL;
+        
+        return;
+    }
+    long long sTime     = 0;
+    long long eTime     = 0;
+    long totalTime      = 0;
+    long long startTime = 0;
+    long long endTime   = 0;
+    long interval       = 0;
+    
+    sTime = currTime();
+    for (int i = 0; i < LOOP_COUNT; i++)
+    {
+        startTime = currTime();
+        while (!feof(fNv12))
+        {
+            // 清空内存
+            memset(i420, 0, I420_BUFF_SIZE);
+            memset(nv12, 0, NV12_BUFF_SIZE);
+            
+            fread(nv12, 1, NV12_BUFF_SIZE, fNv12);  // 每次读取一帧 YUV 数据
+            
+            converter.SY_Nv12ToI420(nv12, YUV_WIDTH, YUV_HEIGHT, i420); // 转换成 I420
+            
+            fwrite(i420, I420_BUFF_SIZE, 1, fI420);
+        }
+        endTime = currTime();
+        
+        fseek(fI420, 0, SEEK_SET);
+        fseek(fNv12, 0, SEEK_SET);
+        
+        interval = endTime - startTime;
+        fflush(stdout);
+        printf("%ld\n", interval);
+    }
+    eTime = currTime();
+    totalTime = eTime - sTime;
+    printf("Total time : %ld\n", totalTime);
+    
+    fclose(fI420);
+    fclose(fNv12);
+    free(i420);
+    free(nv12);
+    i420   = NULL;
+    nv12 = NULL;
+}
+
+#pragma mark -- NV12 转 NV21
+void testNv12ToNv21()
+{
+    SYYuvConverter converter;
+    
+    unsigned char *nv12 = (unsigned char *)malloc(NV12_BUFF_SIZE);
+    unsigned char *nv21 = (unsigned char *)malloc(NV21_BUFF_SIZE);
+    if (NULL == nv12 || NULL == nv21)
+    {
+        printf("Malloc data buffer failure!\n");
+        return;
+    }
+    FILE *fNv12 = fopen("XinWenLianBo_480x360_NV12.yuv", "rb+");  // 打开 NV12 文件
+    FILE *fNv21 = fopen("XinWenLianBo_480x360_NV21.yuv", "wb+");  // 打开 NV21 文件
+    
+    
+    if (NULL == fNv21 || NULL == fNv12)
+    {
+        printf("Open file failure!\n");
+        free(nv21);
+        free(nv12);
+        nv21 = NULL;
+        nv12 = NULL;
+        
+        return;
+    }
+    long long sTime     = 0;
+    long long eTime     = 0;
+    long totalTime      = 0;
+    long long startTime = 0;
+    long long endTime   = 0;
+    long interval       = 0;
+    
+    sTime = currTime();
+    for (int i = 0; i < LOOP_COUNT; i++)
+    {
+        startTime = currTime();
+        while (!feof(fNv12))
+        {
+            // 清空内存
+            memset(nv12, 0, NV12_BUFF_SIZE);
+            memset(nv21, 0, NV21_BUFF_SIZE);
+            
+            fread(nv12, 1, NV12_BUFF_SIZE, fNv12);  // 每次读取一帧 YUV 数据
+            
+            converter.SY_Nv12ToNv21(nv12, YUV_WIDTH, YUV_HEIGHT, nv21); // 转换成 NV21
+            
+            fwrite(nv21, NV21_BUFF_SIZE, 1, fNv21);
+        }
+        endTime = currTime();
+        
+        fseek(fNv21, 0, SEEK_SET);
+        fseek(fNv12, 0, SEEK_SET);
+        
+        interval = endTime - startTime;
+        fflush(stdout);
+        printf("%ld\n", interval);
+    }
+    eTime = currTime();
+    totalTime = eTime - sTime;
+    printf("Total time : %ld\n", totalTime);
+    
+    fclose(fNv21);
+    fclose(fNv12);
+    free(nv21);
+    free(nv12);
+    nv21   = NULL;
+    nv12 = NULL;
+}
+
+#pragma mark -- NV21 转 I420
+void testNv21ToI420()
+{
+    SYYuvConverter converter;
+    
+    unsigned char *i420 = (unsigned char *)malloc(I420_BUFF_SIZE);
+    unsigned char *nv21 = (unsigned char *)malloc(NV21_BUFF_SIZE);
+    if (NULL == i420 || NULL == nv21)
+    {
+        printf("Malloc data buffer failure!\n");
+        return;
+    }
+    FILE *fI420   = fopen("XinWenLianBo_480x360_I420.yuv", "wb+");  // 打开 I420 文件
+    FILE *fNv21 = fopen("XinWenLianBo_480x360_NV21.yuv", "rb+");  // 打开 NV21 文件
+    
+    if (NULL == fI420 || NULL == fNv21)
+    {
+        printf("Open file failure!\n");
+        free(i420);
+        free(nv21);
+        i420 = NULL;
+        nv21 = NULL;
+        
+        return;
+    }
+    long long sTime     = 0;
+    long long eTime     = 0;
+    long totalTime      = 0;
+    long long startTime = 0;
+    long long endTime   = 0;
+    long interval       = 0;
+    
+    sTime = currTime();
+    for (int i = 0; i < LOOP_COUNT; i++)
+    {
+        startTime = currTime();
+        while (!feof(fNv21))
+        {
+            // 清空内存
+            memset(i420, 0, I420_BUFF_SIZE);
+            memset(nv21, 0, NV12_BUFF_SIZE);
+            
+            fread(nv21, 1, NV21_BUFF_SIZE, fNv21);  // 每次读取一帧 YUV 数据
+            
+            converter.SY_Nv21ToI420(nv21, YUV_WIDTH, YUV_HEIGHT, i420); // 转换成 I420
+            
+            fwrite(i420, I420_BUFF_SIZE, 1, fI420);
+        }
+        endTime = currTime();
+        
+        fseek(fI420, 0, SEEK_SET);
+        fseek(fNv21, 0, SEEK_SET);
+        
+        interval = endTime - startTime;
+        fflush(stdout);
+        printf("%ld\n", interval);
+    }
+    eTime = currTime();
+    totalTime = eTime - sTime;
+    printf("Total time : %ld\n", totalTime);
+    
+    fclose(fI420);
+    fclose(fNv21);
+    free(i420);
+    free(nv21);
+    i420   = NULL;
+    nv21 = NULL;
+}
+
+#pragma mark -- NV21 转 NV12
+void testNv21ToNv12()
+{
+    SYYuvConverter converter;
+    
+    unsigned char *nv12 = (unsigned char *)malloc(NV12_BUFF_SIZE);
+    unsigned char *nv21 = (unsigned char *)malloc(NV21_BUFF_SIZE);
+    if (NULL == nv12 || NULL == nv21)
+    {
+        printf("Malloc data buffer failure!\n");
+        return;
+    }
+    FILE *fNv12 = fopen("XinWenLianBo_480x360_NV12.yuv", "wb+");  // 打开 NV12 文件
+    FILE *fNv21 = fopen("XinWenLianBo_480x360_NV21.yuv", "rb+");  // 打开 NV21 文件
+    
+    
+    if (NULL == fNv21 || NULL == fNv12)
+    {
+        printf("Open file failure!\n");
+        free(nv21);
+        free(nv12);
+        nv21 = NULL;
+        nv12 = NULL;
+        
+        return;
+    }
+    long long sTime     = 0;
+    long long eTime     = 0;
+    long totalTime      = 0;
+    long long startTime = 0;
+    long long endTime   = 0;
+    long interval       = 0;
+    
+    sTime = currTime();
+    for (int i = 0; i < LOOP_COUNT; i++)
+    {
+        startTime = currTime();
+        while (!feof(fNv21))
+        {
+            // 清空内存
+            memset(nv12, 0, NV12_BUFF_SIZE);
+            memset(nv21, 0, NV21_BUFF_SIZE);
+            
+            fread(nv21, 1, NV21_BUFF_SIZE, fNv21);  // 每次读取一帧 YUV 数据
+            
+            converter.SY_Nv21ToNv12(nv21, YUV_WIDTH, YUV_HEIGHT, nv12); // 转换成 NV12
+            
+            fwrite(nv12, NV12_BUFF_SIZE, 1, fNv12);
+        }
+        endTime = currTime();
+        
+        fseek(fNv21, 0, SEEK_SET);
+        fseek(fNv12, 0, SEEK_SET);
+        
+        interval = endTime - startTime;
+        fflush(stdout);
+        printf("%ld\n", interval);
+    }
+    eTime = currTime();
+    totalTime = eTime - sTime;
+    printf("Total time : %ld\n", totalTime);
+    
+    fclose(fNv21);
+    fclose(fNv12);
+    free(nv21);
+    free(nv12);
+    nv21   = NULL;
+    nv12 = NULL;
+}
+
 #pragma mark - 旋转
 #pragma mark -- Yuv 旋转
 void testRotateYuv()
@@ -1401,9 +1819,22 @@ int main(int argc, const char * argv[])
 //    testClipYuv();
     
 //    testClipRgb();
+    
 //    testRotateYuv();
     
-    testMirrorYuv();
+//    testMirrorYuv();
     
+//    testI420ToNv12();
+    
+//    testI420ToNv21();
+
+//    testNv12ToI420();
+
+//    testNv12ToNv21();
+
+//    testNv21ToI420();
+
+    testNv21ToNv12();
+
     return 0;
 }

@@ -6,6 +6,11 @@
 //  Copyright © 2018年 http://blog.shenyuanluo.com/ All rights reserved.
 //
 
+
+/*
+ YUV 保存为 BMP 图像
+ */
+
 #ifndef SYYuvToBmp_h
 #define SYYuvToBmp_h
 
