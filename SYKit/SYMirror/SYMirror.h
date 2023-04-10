@@ -2,7 +2,7 @@
 //  SYMirror.h
 //  SYKit <https://github.com/shenyuanluo/SYKit>
 //
-//  Created by shenyuanluo on 2018/10/24.
+//  Created by ShenYuanLuo on 2018/10/24.
 //  Copyright © 2018 http://blog.shenyuanluo.com/ All rights reserved.
 //
 

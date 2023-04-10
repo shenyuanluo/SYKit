@@ -3,14 +3,14 @@
 //  SYKitExample-GPU
 //
 //  Created by ShenYuanLuo on 2023/4/10.
-//  Copyright © 2023 shenyuanluo. All rights reserved.
+//  Copyright © 2023年 http://blog.shenyuanluo.com/ All rights reserved.
 //
 
 import Foundation
 import Metal
 
 /// 旋转结果回调
-typealias SYRotateYUVHandler = (_ outYuv: UnsafeMutableRawPointer?) -> Void
+typealias SYRotateYUVHandler = (_ outYUV: UnsafeMutableRawPointer?) -> Void
 
 class SYRotateOnGPU {
     static var device: MTLDevice!               // 用来计算的设备（即，GPU；一般一个 APP 只用一个对象，所以设置为“类对象”）

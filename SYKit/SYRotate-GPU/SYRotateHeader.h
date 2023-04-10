@@ -3,7 +3,7 @@
 //  SYKitExample-GPU
 //
 //  Created by ShenYuanLuo on 2023/4/10.
-//  Copyright © 2023 shenyuanluo. All rights reserved.
+//  Copyright © 2023年 http://blog.shenyuanluo.com/ All rights reserved.
 //
 
 #ifndef SYRotateHeader_h

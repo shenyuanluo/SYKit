@@ -2,7 +2,7 @@
 //  SYYuvConverter.h
 //  SYKit <https://github.com/shenyuanluo/SYKit>
 //
-//  Created by shenyuanluo on 2018/10/12.
+//  Created by ShenYuanLuo on 2018/10/12.
 //  Copyright © 2018 http://blog.shenyuanluo.com/ All rights reserved.
 //
 

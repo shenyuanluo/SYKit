@@ -19,6 +19,8 @@
 		14E70D8A29E3AB3E00BFB040 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E70D8929E3AB3E00BFB040 /* main.swift */; };
 		14E70D9029E3ABD200BFB040 /* SYRotateOnGPU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E70D8F29E3ABD200BFB040 /* SYRotateOnGPU.swift */; };
 		14E70D9229E3ABEE00BFB040 /* SYRotateShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 14E70D9129E3ABEE00BFB040 /* SYRotateShaders.metal */; };
+		63CBD85529E40FA500F50943 /* SYYuvToRgbOnGPU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CBD85429E40FA500F50943 /* SYYuvToRgbOnGPU.swift */; };
+		63CBD85729E4100400F50943 /* SYYuvToRgbShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 63CBD85629E4100400F50943 /* SYYuvToRgbShaders.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -68,6 +70,16 @@
 		14E70D9129E3ABEE00BFB040 /* SYRotateShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SYRotateShaders.metal; sourceTree = "<group>"; };
 		14E70D9329E3AC1000BFB040 /* SYRotateHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SYRotateHeader.h; sourceTree = "<group>"; };
 		14E70D9529E3AD4100BFB040 /* SYKitExample-GPU-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SYKitExample-GPU-Bridging-Header.h"; sourceTree = "<group>"; };
+		63CBD85429E40FA500F50943 /* SYYuvToRgbOnGPU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SYYuvToRgbOnGPU.swift; sourceTree = "<group>"; };
+		63CBD85629E4100400F50943 /* SYYuvToRgbShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SYYuvToRgbShaders.metal; sourceTree = "<group>"; };
+		63CBD85929E420D100F50943 /* 20230410144356_1440x1920.rgb */ = {isa = PBXFileReference; lastKnownFileType = file; path = 20230410144356_1440x1920.rgb; sourceTree = "<group>"; };
+		63CBD85A29E420D100F50943 /* dst_20230410141404.rgb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dst_20230410141404.rgb; sourceTree = "<group>"; };
+		63CBD85B29E420D100F50943 /* src_20230410144356.yuv */ = {isa = PBXFileReference; lastKnownFileType = file; path = src_20230410144356.yuv; sourceTree = "<group>"; };
+		63CBD85C29E420D100F50943 /* dst_20230410141404swift_convert.rgb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dst_20230410141404swift_convert.rgb; sourceTree = "<group>"; };
+		63CBD85D29E420D100F50943 /* 20230410144356_1440x1920_NV12.rgb */ = {isa = PBXFileReference; lastKnownFileType = file; path = 20230410144356_1440x1920_NV12.rgb; sourceTree = "<group>"; };
+		63CBD85E29E420D100F50943 /* 20230410144356_1440x1920_NV12.yuv */ = {isa = PBXFileReference; lastKnownFileType = file; path = 20230410144356_1440x1920_NV12.yuv; sourceTree = "<group>"; };
+		63CBD85F29E420D100F50943 /* dst_20230410141404.yuv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dst_20230410141404.yuv; sourceTree = "<group>"; };
+		63CBD86029E420D100F50943 /* dst_20230410144356.yuv */ = {isa = PBXFileReference; lastKnownFileType = file; path = dst_20230410144356.yuv; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				1427FDA5212F03B800DE74F9 /* SYKit */,
+				63CBD85829E420D100F50943 /* Resouorces */,
 				1427FD9D212F026D00DE74F9 /* SYKitExample */,
 				14E70D8829E3AB3E00BFB040 /* SYKitExample-GPU */,
 				1427FD9C212F026D00DE74F9 /* Products */,
@@ -155,6 +168,7 @@
 				14736C632181AEC9003298D1 /* SYYuvConverter */,
 				1427FDBE212F048000DE74F9 /* SYYuvToBmp */,
 				1427FDC4212F048000DE74F9 /* SYYuvToRgb */,
+				63CBD85329E40E2900F50943 /* SYYuvToRgb-GPU */,
 			);
 			path = SYConverter;
 			sourceTree = "<group>";
@@ -230,6 +244,30 @@
 				14E70D8F29E3ABD200BFB040 /* SYRotateOnGPU.swift */,
 			);
 			path = "SYRotate-GPU";
+			sourceTree = "<group>";
+		};
+		63CBD85329E40E2900F50943 /* SYYuvToRgb-GPU */ = {
+			isa = PBXGroup;
+			children = (
+				63CBD85629E4100400F50943 /* SYYuvToRgbShaders.metal */,
+				63CBD85429E40FA500F50943 /* SYYuvToRgbOnGPU.swift */,
+			);
+			path = "SYYuvToRgb-GPU";
+			sourceTree = "<group>";
+		};
+		63CBD85829E420D100F50943 /* Resouorces */ = {
+			isa = PBXGroup;
+			children = (
+				63CBD85929E420D100F50943 /* 20230410144356_1440x1920.rgb */,
+				63CBD85A29E420D100F50943 /* dst_20230410141404.rgb */,
+				63CBD85B29E420D100F50943 /* src_20230410144356.yuv */,
+				63CBD85C29E420D100F50943 /* dst_20230410141404swift_convert.rgb */,
+				63CBD85D29E420D100F50943 /* 20230410144356_1440x1920_NV12.rgb */,
+				63CBD85E29E420D100F50943 /* 20230410144356_1440x1920_NV12.yuv */,
+				63CBD85F29E420D100F50943 /* dst_20230410141404.yuv */,
+				63CBD86029E420D100F50943 /* dst_20230410144356.yuv */,
+			);
+			path = Resouorces;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -327,8 +365,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				14E70D9229E3ABEE00BFB040 /* SYRotateShaders.metal in Sources */,
+				63CBD85729E4100400F50943 /* SYYuvToRgbShaders.metal in Sources */,
 				14E70D9029E3ABD200BFB040 /* SYRotateOnGPU.swift in Sources */,
 				14E70D8A29E3AB3E00BFB040 /* main.swift in Sources */,
+				63CBD85529E40FA500F50943 /* SYYuvToRgbOnGPU.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
