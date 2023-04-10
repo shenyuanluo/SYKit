@@ -14,14 +14,14 @@ let rotater = SYRotateOnGPU()
 private func testRotateNV12() {
     let fn  = "XinWenLianBo_480x360_NV12"
     let ifp = fn + ".yuv"
-    let ofp = fn + "rotate_right.yuv"
+    let ofp = fn + "rotate_left.yuv"
     guard let ips = InputStream(fileAtPath: ifp),
           let ops = OutputStream(toFileAtPath: ofp, append: false)else {
         fatalError("Can not find NV12 file path")
     }
     var srcCnt    = 0
     var dstCnt    = 0
-    let direction = SYRotate_clockwise
+    let direction = SYRotate_counterClockwise
     let width     = 480
     let height    = 360
     let buffLen   = Int(Float(width * height) * 1.5)
