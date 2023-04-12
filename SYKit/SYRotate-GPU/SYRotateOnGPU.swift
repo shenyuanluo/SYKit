@@ -17,7 +17,7 @@ class SYRotateOnGPU {
     static var commandQueue: MTLCommandQueue!   // 命令队列（控制渲染命令按部就班执行；一般一个 APP 只用一个对象，所以设置为“类对象”）
     static var library: MTLLibrary!             // 着色器源代码程序（从 Bundle 加载所有着色器文件（.metal），一般一个 APP 只用一个对象，所以设置为“类对象”）
     
-    private var rotateNV12Pipeline: MTLComputePipelineState!    // 旋转NV12-内核计算管线
+    private var rotateNV12Pipeline: MTLComputePipelineState!    // 旋转 NV12 内核计算管线
     
     init() {
         guard let device = MTLCreateSystemDefaultDevice(),
@@ -41,18 +41,25 @@ class SYRotateOnGPU {
     }
     
     
-    /// 旋转 YUV-nv12 图像
+    /// 旋转 NV12
     /// - Parameters:
     ///   - data: yuv 数据
     ///   - width: 图像-宽度
     ///   - height: 图像-高度
-    ///   - isRight: 是否向右旋转（0：向左，1：向右；旋转 90度）
+    ///   - direction: 旋转方向
+    ///   - angle: 旋转角度
     ///   - completion: 结果回调
-    public func nv12Rotate(inYuv: UnsafeRawPointer, width: Int, height: Int, direction: SYRotateDirection, completion: @escaping SYRotateYUVHandler) {
+    public func nv12Rotate(inYuv: UnsafeRawPointer,
+                           width: Int,
+                           height: Int,
+                           direction: SYRotateDirection,
+                           angle: SYRotateAngle,
+                           completion: @escaping SYRotateYUVHandler) {
         var width     = width
         var height    = height
         let dataSize  = Int(Float(width * height) * 1.5)
         var direction = direction
+        var angle     = angle
         let inYUVBuff = SYRotateOnGPU.device.makeBuffer(bytes: inYuv,
                                                         length: MemoryLayout<UInt8>.size * dataSize,
                                                         options: .storageModeShared)    // 使用共享内存（CPU 和 GPU都可以访问）
@@ -66,10 +73,11 @@ class SYRotateOnGPU {
             return
         }
         computeEncoder.setComputePipelineState(self.rotateNV12Pipeline) // 设置内核计算管线
-        computeEncoder.setBytes(&width, length: MemoryLayout<Int>.stride, index: 11)    // 图像-宽度
-        computeEncoder.setBytes(&height, length: MemoryLayout<Int>.stride, index: 12)   // 图像-高度
-        computeEncoder.setBytes(&direction, length: MemoryLayout<Int>.stride, index: 13)  // 图像-旋转方向
-        computeEncoder.setBuffer(inYUVBuff, offset: 0, index: 0)    // 原始图像数据缓存
+        computeEncoder.setBytes(&width,     length: MemoryLayout<Int>.stride, index: 11)    // 图像-宽度
+        computeEncoder.setBytes(&height,    length: MemoryLayout<Int>.stride, index: 12)    // 图像-高度
+        computeEncoder.setBytes(&direction, length: MemoryLayout<Int>.stride, index: 13)    // 图像-旋转方向
+        computeEncoder.setBytes(&angle,     length: MemoryLayout<Int>.stride, index: 14)    // 图像-旋转角度
+        computeEncoder.setBuffer(inYUVBuff,  offset: 0, index: 0)   // 原始图像数据缓存
         computeEncoder.setBuffer(outYUVBuff, offset: 0, index: 1)   // 结果图像数据缓存
         
 #if false   // 为 true 时，模拟器不支持，会 crash

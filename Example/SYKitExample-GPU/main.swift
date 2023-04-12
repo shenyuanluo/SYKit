@@ -14,16 +14,31 @@ let yuv2rgb = SYYuvToRgbOnGPU()
 /// 测试旋转 NV12 图像
 private func testRotateNV12() {
     print("testRotateNV12...")
-    let fn  = "XinWenLianBo_480x360_NV12"
-    let ifp = fn + ".yuv"
-    let ofp = fn + "rotate.yuv"
+    let direction = SYRotate_counterClockwise
+    let angle     = SYRotate_90
+    let fn        = "XinWenLianBo_480x360_NV12"
+    let ifp       = fn + ".yuv"
+    var ofp       = fn + "_gpu"
+    if direction == SYRotate_counterClockwise {
+        ofp += "_left"
+    } else {
+        ofp += "_right"
+    }
+    if angle == SYRotate_90 {
+        ofp += "_90.yuv"
+    } else if angle == SYRotate_180 {
+        ofp += "_180.yuv"
+    } else if angle == SYRotate_270 {
+        ofp += "_270.yuv"
+    } else {
+        ofp += "_360.yuv"
+    }
     guard let ips = InputStream(fileAtPath: ifp),
           let ops = OutputStream(toFileAtPath: ofp, append: false)else {
         fatalError("Can not find NV12 file path")
     }
     var srcCnt    = 0
     var dstCnt    = 0
-    let direction = SYRotate_counterClockwise
     let width     = 480
     let height    = 360
     let buffLen   = Int(Float(width * height) * 1.5)
@@ -41,9 +56,10 @@ private func testRotateNV12() {
         srcCnt += 1
         let start  = Date()
         rotater.nv12Rotate(inYuv: pointer,
-                                width: width,
-                                height: height,
-                                direction: direction) { outYuv in
+                           width: width,
+                           height: height,
+                           direction: direction,
+                           angle: angle) { outYuv in
             if let outYuv = outYuv {
                 let wSize = ops.write(outYuv, maxLength: buffLen)
                 dstCnt   += 1
@@ -116,5 +132,5 @@ private func testNV12ToRGB24() {
 
 testRotateNV12()
 
-testNV12ToRGB24()
+//testNV12ToRGB24()
 

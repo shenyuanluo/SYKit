@@ -30,4 +30,12 @@ typedef enum {
     SYRotate_counterClockwise   = 1,    // 逆时针
 }SYRotateDirection;
 
+/* (帧画面）旋转度数 */
+typedef enum {
+    SYRotate_90                 = 0,    // 旋转 90°
+    SYRotate_180                = 1,    // 旋转 180°
+    SYRotate_270                = 2,    // 旋转 270°
+    SYRotate_360                = 3,    // 旋转 360°
+}SYRotateAngle;
+
 #endif /* SYRotateHeader_h */
