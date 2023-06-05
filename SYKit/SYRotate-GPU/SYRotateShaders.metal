@@ -7,13 +7,13 @@
 //
 
 #include <metal_stdlib>
-#include "SYRotateHeader.h"
+#include "../SYHeader.h"
 using namespace metal;
 
 
-/// 旋转 NV12 图像
+/// 旋转 NV12（或NV21) 图像
 kernel
-void NV12Rotate(device const unsigned char* inYUV,                                      // 原始图像
+void rotateNV12(device const unsigned char* inYUV,                                      // 原始图像
                 device unsigned char*       outYUV,                                     // 结果图像
                 constant int&               width     [[ buffer(11) ]],                 // 图像-宽度（像素）
                 constant int&               height    [[ buffer(12) ]],                 // 图像-高度（像素）
@@ -40,7 +40,7 @@ void NV12Rotate(device const unsigned char* inYUV,                              
     int dstUVPos = srcUVPos;                                    // 目的 UV 行-下标
     
     if ((SYRotate_clockwise == direction && SYRotate_90 == angle)
-        || (SYRotate_counterClockwise == direction && SYRotate_270 == angle))       // 右转 90°
+        || (SYRotate_antiClockwise == direction && SYRotate_270 == angle))       // 右转 90°
     {
         dstYPos = col * height + (height - 1 - row);
         if ((0 == (row&1))&& (0 == (col&1)))
@@ -51,7 +51,7 @@ void NV12Rotate(device const unsigned char* inYUV,                              
         }
     }
     else if ((SYRotate_clockwise == direction && SYRotate_180 == angle)
-             || (SYRotate_counterClockwise == direction && SYRotate_180 == angle))  // 右转 180°
+             || (SYRotate_antiClockwise == direction && SYRotate_180 == angle))  // 右转 180°
     {
         dstYPos = (height - 1 - row) * width + (width - 1 - col);
         if ((0 == (row&1)) && (0 == (col&1)))
@@ -62,7 +62,7 @@ void NV12Rotate(device const unsigned char* inYUV,                              
         }
     }
     else if ((SYRotate_clockwise == direction && SYRotate_270 == angle)
-             || (SYRotate_counterClockwise == direction && SYRotate_90 == angle))   // 右转 270°
+             || (SYRotate_antiClockwise == direction && SYRotate_90 == angle))   // 右转 270°
     {
         dstYPos = (width - 1 - col) * height + row;
         if ((0 == (row&1))&& (0 == (col&1)))

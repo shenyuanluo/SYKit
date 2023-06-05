@@ -68,7 +68,6 @@
 		14E70D8929E3AB3E00BFB040 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		14E70D8F29E3ABD200BFB040 /* SYRotateOnGPU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SYRotateOnGPU.swift; sourceTree = "<group>"; };
 		14E70D9129E3ABEE00BFB040 /* SYRotateShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SYRotateShaders.metal; sourceTree = "<group>"; };
-		14E70D9329E3AC1000BFB040 /* SYRotateHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SYRotateHeader.h; sourceTree = "<group>"; };
 		14E70D9529E3AD4100BFB040 /* SYKitExample-GPU-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SYKitExample-GPU-Bridging-Header.h"; sourceTree = "<group>"; };
 		63CBD85429E40FA500F50943 /* SYYuvToRgbOnGPU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SYYuvToRgbOnGPU.swift; sourceTree = "<group>"; };
 		63CBD85629E4100400F50943 /* SYYuvToRgbShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SYYuvToRgbShaders.metal; sourceTree = "<group>"; };
@@ -230,9 +229,8 @@
 		14E70D8E29E3AB4700BFB040 /* SYRotate-GPU */ = {
 			isa = PBXGroup;
 			children = (
-				14E70D9329E3AC1000BFB040 /* SYRotateHeader.h */,
-				14E70D9129E3ABEE00BFB040 /* SYRotateShaders.metal */,
 				14E70D8F29E3ABD200BFB040 /* SYRotateOnGPU.swift */,
+				14E70D9129E3ABEE00BFB040 /* SYRotateShaders.metal */,
 			);
 			path = "SYRotate-GPU";
 			sourceTree = "<group>";

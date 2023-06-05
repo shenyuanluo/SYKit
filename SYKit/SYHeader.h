@@ -303,7 +303,9 @@ typedef struct __bitMap
 {
     SYBitMapHeader      bfHeader;
     SYBitMapFileInfo    bfInfo;
+#ifdef __OBJC__ // 在 Swift-Metal 中，头文件结构体声明不允许有指针
     unsigned char*      bfData;
+#endif
 }SYBitMap;
 
 

@@ -9,6 +9,6 @@
 #ifndef SYKitExample_GPU_Bridging_Header_h
 #define SYKitExample_GPU_Bridging_Header_h
 
-#include "SYRotateHeader.h"
+#include "SYHeader.h"
 
 #endif /* SYKitExample_GPU_Bridging_Header_h */
